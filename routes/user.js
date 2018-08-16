@@ -17,4 +17,17 @@ router.post('/login', (req, res) => {
     })
 })
 
+router.post('/new', (req, res) => {
+    const { name, email, mobile, password } = req.body;
+    const query = `insert into ${tableName} set ? `
+    pool.query(query, req.body, (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result: true })
+        }
+    })
+})
+
 module.exports = router;
