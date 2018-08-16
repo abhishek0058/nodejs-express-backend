@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const pool = require('./pool');
 
-const tableName = 'admin'
-
+const tableName = 'user'
 
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
-    pool.query(`select * from ${tableName} where set ? `, req.body, (err, result) => {
+    const query = `select * from ${tableName} where (email = ? or mobile = ?) and password = ? `
+    pool.query(query, [username, username, password], (err, result) => {
         if(err) {
             console.log(err);
-            res.json(err);
+            res.json([]);
         } else {
             res.json(result)
         }
