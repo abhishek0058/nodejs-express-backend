@@ -2,24 +2,15 @@ const express = require('express');
 const router = express.Router();
 const pool = require('./pool');
 
-const tableName = 'user'
+const tableName = 'account'
 
-router.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    const query = `select * from ${tableName} where (email = ? or mobile = ?) and password = ? `
-    pool.query(query, [username, username, password], (err, result) => {
-        if(err) {
-            console.log(err);
-            res.json([]);
-        } else {
-            res.json(result)
-        }
-    })
+router.get('/', (req, res) => {
+    res.render('package/package')
 })
 
 router.post('/new', (req, res) => {
     const query = `insert into ${tableName} set ? `
-    pool.query(query, req.body, (err) => {
+    pool.query(query, req.body, err => {
         if(err) {
             console.log(err)
             res.json({ result: false })
@@ -30,9 +21,9 @@ router.post('/new', (req, res) => {
 })
 
 router.post(`/edit`, (req, res) => {
-    const { id } = req.body
-    const query = `update ${tableName} set ? where id = ? `
-    pool.query(query, [req.body, id], (err) => {
+    const { id, name } = req.body
+    const query = `update ${tableName} set name = ? where id = ? `
+    pool.query(query, [name, id], err => {
         if(err) {
             console.log(err)
             res.json({ result: false })
@@ -54,7 +45,20 @@ router.get('/single/:id', (req, res) => {
     })
 })
 
+router.get('/delete/:id', (req, res) => {
+    const { id } = req.params;
+    pool.query(`delete from ${tableName} where id = ?`, [id], (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result: true })
+        }
+    })
+})
+
 router.get('/all', (req, res) => {
+    const query = `select * from account a, package p, user u where a.userid = u.id, p.id = a.packageid`;
     pool.query(`select * from ${tableName}`, (err, result) => {
         if(err) {
             console.log(err)
@@ -64,6 +68,5 @@ router.get('/all', (req, res) => {
         }
     })
 })
-
 
 module.exports = router;

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>City</title>
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>City Panel</h1>
+        <div class="row">
+            <div class="col-lg-6">
+                <input type="text" id="name" class="form-control" placeholder="New City" />
+            </div>
+            <div class="col-lg-6">
+                <button class="btn btn-block" style="float: right;" id="add">Add City</button>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <table id="result" class="table table-bordered"></table>
+        </div>
+    </div>
+    <script src="javascripts/jquery.js"></script>
+    <script>
+        $('#add').click(function () {
+            $.post('/city/new', {
+                name: $('#name').val()
+            }, data => refresh())
+        })
+
+        $('#result').on('click', '.delete', e => {
+            const id = e.target.attributes[1].value
+            $.get(`/city/delete/${id}`, data => refresh())
+        })
+
+        function refresh() {
+            $.getJSON(`/city/all`, data => makeTable(data.result))
+        }
+
+        function makeTable(data) {
+            let table = "<tr><td>ID</td><td>Name</td><td>Delete</td></tr>"
+            $.each(data, (i, item) => {
+                table +=
+                    `<tr><td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td><button class="btn btn-danger delete" id=${item.id}>Delete</button></td>
+                    </tr>`
+            })
+            table += "</table>"
+            $('#result').html(table)
+        }
+
+        refresh()
+    </script>
+</body>
+
+</html>
