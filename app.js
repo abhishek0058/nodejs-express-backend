@@ -12,6 +12,7 @@ var hostel = require('./routes/hostel')
 var machine = require('./routes/machine')
 var package = require('./routes/package')
 var account = require('./routes/account')
+var test = require('./routes/test')
 
 var app = express();
 
@@ -32,6 +33,7 @@ app.use('/hostel', hostel);
 app.use('/machine', machine);
 app.use('/package', package);
 app.use('/account', account);
+app.use('/test', test);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -8,9 +8,20 @@ router.get('/', (req, res) => {
     res.render('package/package')
 })
 
-router.post('/new', (req, res) => {
-    const query = `insert into ${tableName} set ? `
-    pool.query(query, req.body, err => {
+
+
+router.post('/buy', (req, res) => {
+    console.log('request Body', req.body);
+    
+    const { userid, packageid, cycles, amount } = req.body;
+
+    const queryAccount = `insert into account (userid, packageid, cycles_left) VALUES (${userid}, ${packageid}, ${cycles})
+                        ON DUPLICATE KEY UPDATE packageid = ${packageid}, cycles_left = cycles_left + ${cycles};`;
+
+    const queryHistory = `insert into purchase_history(userid, packageid, amount, date) 
+                        values(${userid}, ${packageid}, ${amount}, CURDATE());`;
+
+    pool.query(queryAccount + queryHistory, req.body, err => {
         if(err) {
             console.log(err)
             res.json({ result: false })

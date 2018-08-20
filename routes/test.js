@@ -9,6 +9,22 @@ const pubnub = new PubNub({
 
 const channel = "numericrp";
 
+router.get('/:message/:channel', (req, res) => {
+    const { message, channel } = req.params;
+    console.log(req.params)
+    pubnub.publish({
+        channel: channel,
+        message: message
+    }, function(status, response) {
+        if (status.error) {
+            console.log(status)
+        } else {
+            console.log("message Published w/ timetoken", response.timetoken)
+        }
+        res.json({ result : response })
+    });
+});
+
 router.get('/on', (req, res) => {
     pubnub.publish({
         channel: channel,
@@ -19,9 +35,9 @@ router.get('/on', (req, res) => {
         } else {
             console.log("message Published w/ timetoken", response.timetoken)
         }
-        res.end
+        res.json({ result : response })
     });
-})
+});
 
 router.get('/off', (req, res) => {
     pubnub.publish({
@@ -33,6 +49,8 @@ router.get('/off', (req, res) => {
         } else {
             console.log("message Published w/ timetoken", response.timetoken)
         }
-        res.end
+        res.json({ result : response })
     });
-})
+});
+
+module.exports = router;
