@@ -1,6 +1,10 @@
+module.exports = function(io) {
+
 var express = require('express')
 var router = express.Router();
 var PubNub = require('pubnub')
+var email = require('./email');
+
 
 const pubnub = new PubNub({
     publishKey : 'pub-c-41a12f2d-6208-45aa-aa2b-bb08116d820c',
@@ -11,7 +15,7 @@ const channel = "numericrp";
 
 router.get('/:message/:channel', (req, res) => {
     const { message, channel } = req.params;
-    console.log(req.params)
+
     pubnub.publish({
         channel: channel,
         message: message
@@ -53,4 +57,6 @@ router.get('/off', (req, res) => {
     });
 });
 
-module.exports = router;
+return router;
+
+}

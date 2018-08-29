@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var socket = require( "socket.io" );
+
+var io = socket();
+var app = express();
 
 var indexRouter = require('./routes/index');
 var user = require('./routes/user');
@@ -12,9 +16,9 @@ var hostel = require('./routes/hostel')
 var machine = require('./routes/machine')
 var package = require('./routes/package')
 var account = require('./routes/account')
-var test = require('./routes/test')
-
-var app = express();
+var test = require('./routes/test')(io)
+var purchaseHistory = require('./routes/purchaseHistory');
+var machineSocket = require('./routes/machineSocket')(io);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,6 +38,9 @@ app.use('/machine', machine);
 app.use('/package', package);
 app.use('/account', account);
 app.use('/test', test);
+app.use('/purchaseHistory', purchaseHistory)
+app.use('/machineSocket', machineSocket)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -51,4 +58,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.io = io;
 module.exports = app;

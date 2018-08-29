@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('./pool');
-
+const email = require('./email')
 const tableName = 'account'
 
 router.get('/', (req, res) => {
     res.render('package/package')
 })
 
-
-
 router.post('/buy', (req, res) => {
-    console.log('request Body', req.body);
     
     const { userid, packageid, cycles, amount } = req.body;
 
@@ -21,12 +18,23 @@ router.post('/buy', (req, res) => {
     const queryHistory = `insert into purchase_history(userid, packageid, amount, date) 
                         values(${userid}, ${packageid}, ${amount}, CURDATE());`;
 
-    pool.query(queryAccount + queryHistory, req.body, err => {
+    const packageDetails = `select name, cycles, amount from package where id = ${packageid};`;
+    
+    const userDeatils = `select email from user where id = ${userid};`;
+
+    pool.query(queryAccount + queryHistory + packageDetails + userDeatils, req.body, (err, result) => {
         if(err) {
             console.log(err)
             res.json({ result: false })
         } else {
-            res.json({ result: true })
+            var data = {
+                name: result[2][0].name,
+                cycles: result[2][0].cycles,
+                transactionid: result[1].insertId,
+                amount: result[2][0].amount
+            }
+
+            email({email: result[3][0].email}, "package-receipt", res, 0, data)
         }
     })
 })
@@ -76,6 +84,19 @@ router.get('/all', (req, res) => {
             res.json({ result: false })
         } else {
             res.json({ result })
+        }
+    })
+})
+
+router.get('/cyclesLeft/:userid', (req, res) => {
+    const { userid } = req.params
+    const query  = `select *, (select name from package where id = account.packageid) as package from account where userid = ?`
+    pool.query(query, [userid], (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result: result })
         }
     })
 })

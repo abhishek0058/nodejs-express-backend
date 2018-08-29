@@ -1,5 +1,8 @@
 {
     "files.associations": {
         "*.js": "javascript"
-    }
+    },
+    "cSpell.words": [
+        "machineid"
+    ]
 }

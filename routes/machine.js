@@ -15,6 +15,7 @@ router.get("/ByCityAndHostel/:cityid/:hostelid", (req, res) => {
       console.log(err);
       res.json({ result: [] });
     } else {
+      //console.log(result)
       res.json({ result });
     }
   });
