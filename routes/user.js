@@ -57,7 +57,7 @@ router.get('/DisplayAll',(req,res)=>{
     res.render('user/DisplayAll')
 })
 router.get('/DisplayAllJSON', (req, res) => {
-    pool.query(`select U.*,A.* from ${tableName} U, Account A WHERE U.id=A.userid`, (err, result) => {
+    pool.query(`select U.*,A.* from ${tableName} U, account A WHERE U.id=A.userid`, (err, result) => {
         if(err) {
             console.log(err)
             res.json({ result: false })
