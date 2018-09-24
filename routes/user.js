@@ -53,7 +53,19 @@ router.get('/single/:id', (req, res) => {
         }
     })
 })
-
+router.get('/DisplayAll',(req,res)=>{
+    res.render('user/DisplayAll')
+})
+router.get('/DisplayAllJSON', (req, res) => {
+    pool.query(`select U.*,A.* from ${tableName} U, Account A WHERE U.id=A.userid`, (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result })
+        }
+    })
+})
 router.get('/all', (req, res) => {
     pool.query(`select * from ${tableName}`, (err, result) => {
         if(err) {

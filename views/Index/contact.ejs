@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+ <head>
+   <!-- Basic Page Needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv="x-ua-compatible" content="IE=9" /><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LaundryBay - Laundry Business </title>
+    <meta name="description" content="LaundryBay - Laundry Business.">
+    <meta name="keywords" content="">
+    <meta name="author" content=""> 
+	
+	<!-- ==============================================
+	Favicons
+	=============================================== -->
+    <link rel="shortcut icon" href="js/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/js/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/js/images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/js/images/apple-touch-icon-114x114.png">
+	
+	<!-- ==============================================
+	CSS
+	=============================================== -->
+	<link rel="stylesheet" type="text/css" href="/js/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="/js/css/font-awesome.min.css">
+	
+	
+	
+	<!-- ==============================================
+	Google Fonts
+	=============================================== -->
+	<link rel="stylesheet" type="text/css" href="/js/css/font.css" />
+	
+	
+	<!-- Custom Stylesheet -->
+	<link rel="stylesheet" type="text/css" href="/js/css/style.css" />
+	
+	
+    <script type="text/javascript" src="/js/js/modernizr.min.js"></script>
+	
+</head>
+
+<body>
+	
+	<!-- Load page -->
+	<div class="animationload">
+		<div class="loader"></div>
+	</div>
+	
+	
+	<!-- NAVBAR SECTION -->
+	<div class="navbar navbar-main navbar-fixed-top">
+		<div class="header-top">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12 col-sm-7 col-md-7 col-lg-7">
+						<div class="info">
+							<div class="info-item">
+								<span class="fa fa-phone"></span> Phone +91 9644035102, 9109271234
+							</div>
+							<div class="info-item">
+								<span class="fa fa-envelope-o"></span> <a href="" title="">Email info@laundrybay.in</a>
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+						<div class="top-sosmed pull-right" style="margin-top:0px;">
+					<!-- <?php 
+					session_start();
+				if(!isset($_SESSION['username'])){
+					echo '<a href="/index.php/User_ctrl/showlogin"><button type="submit" class="btn btn-default" style="pointer-events: all; cursor: pointer;"><span class="fa fa-lock"></span>Login</button></a>
+
+	<a href="/index.php/User_ctrl/"><button type="submit" class="btn btn-default" style="pointer-events: all; cursor: pointer;"><span class="fa fa-pencil"></span>Registration</button></a>';
+				}			
+				else{
+				echo '<a href="/user/logout"><button type="submit" class="btn btn-default" style="pointer-events: all; cursor: pointer;"><span class="fa fa-users"></span>'.$_SESSION['name'].' (logout)</button></a>';	
+				}
+						
+		  	
+
+				?> -->
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><img src="/js/images/logo_blue.png" alt="" /></a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+                        <li ><a href="/">HOME</a></li>
+                        <li><a href="/about">ABOUT</a></li>
+                        <li><a href="/services">SERVICES</a></li>
+                        <li><a href="/pricing">PRICING</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/blog">BLOG</a></li>
+                        <li class="active"><a href="/contact">CONTACT</a></li>
+				</ul>
+			</div>
+		</div>
+    </div>
+
+ 
+	<!-- BANNER -->
+	<div class="section subbanner" style="background:url('/js/images/slide_page.jpg') no-repeat center center;   -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="caption">
+						<h3>CONTACT US</h3>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	
+	<!-- ABOUT SECTION -->
+	<div id="services" class="section services">
+		<div class="container">
+			<!--  -->
+			<div class="row">
+				<div class="col-sm-12 col-md-12">
+					<div class="page-title">
+						
+						</div>
+				</div>
+			</div>
+			
+			
+			<div class="row pbot-main">
+			
+				<div class="col-sm-12 col-md-6">
+					
+					<form action="#" class="form-contact shake" id="contactForm"  data-toggle="validator">
+						<div class="form-group">
+							<input type="text" class="form-control" id="name" placeholder="Enter Name *" required>
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<input type="email" class="form-control" id="email" placeholder="Enter Email *" required>
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="phone" placeholder="Enter Phone Number">
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="address" placeholder="Enter Address">
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="city" placeholder="Enter City">
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="zip" placeholder="Enter Zip">
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							 <textarea id="message" class="form-control" rows="5" placeholder="Enter Your Message *" required></textarea>
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<div id="success"></div>
+							<button type="submit" class="btn btn-default">SEND A MESSAGE</button>
+						</div>
+					</form>
+					
+					
+				</div>
+				
+				<div class="col-sm-12 col-md-6">
+				
+					<div class="maps-wraper">
+						
+						<div class="maps" >
+							<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d894.5162015787296!2d78.21000389817387!3d26.259560026559605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3976c1284c0da8df%3A0x241dd74c1117c683!2sMaharaja+Complex!5e0!3m2!1sen!2sin!4v1506171580650" width="100%" height="320" frameborder="1" style="border:1px;" allowfullscreen></iframe>
+						<hr></div>
+					</div>
+					
+					 
+					<div class="row contact-address"><br>
+						<div class="col-sm-12 col-md-6">
+							<div class="contact-address-item">
+								<div class="contact-address-heading">ADDRESS </div>
+								<p>
+								DH-15, Opposite Maharaja<br> Complex,Deendayal Nagar<br>Gwalior (M.P.) 474020
+								</p>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							<div class="contact-address-item">
+								<div class="contact-address-heading">CONTACT </div>
+								<p>  
+								+91 9644035102,<br> +91 9109271234
+								</p>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							<div class="contact-address-item">
+								<div class="contact-address-heading">OPENING HOURS</div>
+								<p>
+								24 Hour
+								</p>
+							</div>
+						</div>
+						
+					</div>
+					
+					
+				</div>
+				
+				
+			</div>
+			
+			
+			
+		</div>
+	</div>
+	
+		<div class="section stat-facts"  style="background:url('/js/images/page_img-u24411-fr.png') no-repeat center center; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover">
+		<div class="bg-overlay" style="padding:2px;">
+			
+		</div>
+	</div>
+	<!-- FOOTER SECTION -->
+	<div class="footer">
+	
+		<div class="f-desc">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<div class="footer-item">
+							<div class="footer-logo">
+								<img src="/js/images/flogo.png" alt="" />
+							</div>
+							<p>Laundry inside their hostel it self
+All of us expenenu the hostel life during our college 
+Days. Dirty and messy clothes are a big trouble for 
+Hostel  students. 
+<br>
+<a href="/index.php/user_ctrl/about">Read More.</a></p>
+							<div class="footer-sosmed">
+								
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<div class="footer-item">
+							<div class="footer-title">
+								<h4>SOCIAL</h4>
+							</div>
+							
+								<div class="footer-sosmed">
+									<a href="https://www.facebook.com/" target="blank" title="">
+									<div class="item">
+										<i class="fa fa-facebook"></i>
+									</div>
+								</a>
+								
+								<a href="https://www.gmail.com/" target="blank" title="">
+									<div class="item">
+										<i class="fa fa-google"></i>
+									</div>
+								</a>
+								
+								<a href="https://www.youtube.com/" target="blank" title="">
+									<div class="item">
+										<i class="fa fa-youtube"></i>
+									</div>
+								</a> 
+							</div>
+							</div>
+							
+						
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<div class="footer-item">
+							<div class="footer-title">
+								<h4>APP STORE DOWNLOAD</h4>
+							</div>
+							<div class="footer-form">
+								<form action="#">
+									<div class="form-group">
+										<a href="#"><img src="/js/images/android.jpg"></a>
+									</div>
+									<div class="form-group">
+										<a href="#"><img src="/js/images/iphone.jpg"></a>
+									</div>
+								
+								</form>
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<div class="footer-item">
+							<div class="footer-title">
+								<h4>GET IN TOUCH</h4>
+							</div>
+							<div class="footer-getintouch">
+								<div class="footer-getintouch-item">
+									<div class="icon">
+										<b class="fa fa-phone"></b>
+									</div>
+									<div class="desc">
+										<div class="desc-1">Phone</div>
+										<div class="desc-2">:</div>
+										<div class="desc-3">+91 9644035102, 9109271234 </div>
+									</div>
+								</div>
+								<div class="footer-getintouch-item">
+									<div class="icon">
+										<b class="fa fa-envelope "></b>
+									</div>
+									<div class="desc">
+										<div class="desc-1">Email</div>
+										<div class="desc-2">:</div>
+										<div class="desc-3"><a href="/js/mailto:support@laundrybay.in" title="">support@laundrybay.in</a></div>
+									</div>
+								</div>
+								<div class="footer-getintouch-item">
+									<div class="icon">
+										<b class="fa fa-globe"></b>
+									</div>
+									<div class="desc">
+										<div class="desc-1">Website </div>
+										<div class="desc-2">:</div>
+										<div class="desc-3">www.laundrybay.in</div>
+									</div>
+								</div>
+								<div class="footer-getintouch-item">
+									<div class="icon">
+										<b class="fa fa-map-marker"></b>
+									</div>
+									<div class="desc">
+										<div class="desc-1">Address </div>
+										<div class="desc-2">:</div>
+										<div class="desc-3">DH-15, Opposite Maharaja<br> Complex,Deendayal Nagar<br>Gwalior (M.P.) 474020</div>
+									</div>
+									
+								</div>
+								
+							</div>
+						</div>
+						
+					</div>
+					
+				</div>
+			</div>
+				
+		</div>
+		
+		<div class="fcopy">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<p class="ftex">&copy; 2017 Laundrybay by Numeric - All Rights Reserved</p> 
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	
+	
+	<script type="text/javascript" src="/js/js/jquery.min.js"></script>
+	<script type='text/javascript' src='https://maps.google.com/maps/api/js?sensor=false&amp;ver=4.1.5'></script>
+	<script type='text/javascript' src='/js/js/jqBootstrapValidation.js'></script>
+	<script type="text/javascript" src="/js/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/js/bootstrap-hover-dropdown.min.js"></script>
+	
+	<!-- sendmail -->
+	<script type="text/javascript" src="/js/js/validator.min.js"></script>
+	<script type="text/javascript" src="/js/js/form-scripts.js"></script>
+	
+	<script type="text/javascript" src="/js/js/script.js"></script>
+
+	
+</body>
+</html>

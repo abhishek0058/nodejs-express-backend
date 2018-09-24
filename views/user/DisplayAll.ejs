@@ -1,0 +1,64 @@
+<html>
+<head>
+<!-- start: Css -->
+<meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="keyword" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+<link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css">
+      <!-- plugins -->
+      <script src="/admin/asset/js/jquery.min.js"></script>
+    <script src="/admin/asset/js/jquery.ui.min.js"></script>
+    <script src="/admin/asset/js/bootstrap.min.js"></script>
+
+
+</head>
+<script>
+function makeCard(data) {
+	let htm = '';
+	htm+='<center><h3>List of Users</h3></center>'
+    htm+='<center><br>'
+    htm+='<table class="table table-bordered table-hover" style="">'
+    htm+='<tr>'
+    htm+='<th><b>Id</b></th>'
+    htm+='<th><b>Name</b></th>'
+    htm+='<th><b>Mobile</b></th>'
+    htm+='<th><b>Email</b></th>'
+    htm+='<th><b>Account Number</b></th>'
+    htm+='<th><b>Balance</b></th>'
+    htm+='</tr>'
+    // console.log(data)
+	$.each(data.result, function(i, item) {
+        $acc=(item.id==0)? '':item.id;
+        $bal=(item.cycles_left<0)? '':item.cycles_left;
+        htm+=`<tr>`
+        htm+=`<td>${item.id}</td>`
+        htm+=`<td>${item.name}</td>`
+        htm+=`<td>${item.mobile}</td>`
+        htm+=`<td>${item.email}</td>`
+        htm+=`<td>${$acc}</td>`
+        htm+=`<td>${$bal}</td>`
+        htm+=`</tr> `
+		
+	})
+	$('#result').html(htm)
+}
+var url = '/user/DisplayAllJSON'
+		$.getJSON(url, function(data) {
+			makeCard(data)
+        })
+        </script>
+<body>
+    <div class='container'>
+        <div class="row">
+            <div id="result"></div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+

@@ -10,6 +10,7 @@ var io = socket();
 var app = express();
 
 var indexRouter = require('./routes/index');
+var admin=require('./routes/admin');
 var user = require('./routes/user');
 var city = require('./routes/city')
 var hostel = require('./routes/hostel')
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/admin',admin);
 app.use('/user', user);
 app.use('/city', city);
 app.use('/hostel', hostel);
