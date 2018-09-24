@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 var socket = require( "socket.io" );
+var cookieSession = require('cookie-session')
 
 var io = socket();
 var app = express();
@@ -20,6 +21,12 @@ var account = require('./routes/account')
 var test = require('./routes/test')(io)
 var purchaseHistory = require('./routes/purchaseHistory');
 var machineSocket = require('./routes/machineSocket')(io);
+
+app.use(cookieSession({
+  name: 'laudrybay',
+  keys: ['abhishek0058'],
+  maxAge: 100 * 60 * 60 * 1000
+}))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
