@@ -21,7 +21,7 @@ module.exports = function(io) {
   const activator_user = `update machine set activator_user = ? where channel = ?;`;
   const insertCycleHistory = `insert into cycle_use_history (userid, date) values (?, '${new Date().toString()}');`;
 
-  const removeActivatorUser = `update machine set activator_user = 0 where channel = ?;`;
+  const removeActivatorUser = `update machine set activator_user = '' where channel = ?;`;
 
   const pubnub = new PubNub({
     publishKey: "pub-c-41a12f2d-6208-45aa-aa2b-bb08116d820c",
