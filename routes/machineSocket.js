@@ -110,15 +110,14 @@ module.exports = function(io) {
     });
   }
 
-  pool.query(`${makeMachinesInActive};select channel from machine;`,(err, result) => {
-      if (err) {
-        console.log(err);
-        refresh([]);
-      } else {
-        refresh(makeArrayOfStrings(result[1]));
-      }
+  pool.query(`${makeMachinesInActive};select channel from machine;`, (err, result) => {
+    if (err) {
+      console.log(err);
+      refresh([]);
+    } else {
+      refresh(makeArrayOfStrings(result[1]));
     }
-  );
+  });
 
   router.get("/ByCityAndHostel/:cityid/:hostelid", (req, res) => {
     const { cityid, hostelid } = req.params;
@@ -137,17 +136,17 @@ module.exports = function(io) {
     });
   });
 
-
   pubnub.addListener({
     message: function(data) {
       const { message, channel } = data;
       console.log(message)
-
+      
       const type = message.split("#")[0];
       const userid = message.split("#")[1];
 
       if (type == "TURNEDON") {
         emitFreshMachinesStatusAfterTurningOn(io, channel, userid);
+        startTimer(io, channel, userid);
       } else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
       } else if (message == "TRUE") {
@@ -156,7 +155,6 @@ module.exports = function(io) {
       }
     }
   });
-
 
   io.on("connection", socket => {
     console.log("New User connected", socket.id);
@@ -194,14 +192,14 @@ module.exports = function(io) {
           if (status.error) {
             console.log(status);
           } else {
-            pool.query(
-              machineBusy + query,
-              ["active", info.machineid, info.cityid, info.hostelid],
-              (err, result) => {
-                if (err) console.log(err);
-                else io.sockets.emit("newMachines", { result: result[1] });
-              }
-            );
+            // pool.query(
+            //   machineBusy + query,
+            //   ["active", info.machineid, info.cityid, info.hostelid],
+            //   (err, result) => {
+            //     if (err) console.log(err);
+            //     else io.sockets.emit("newMachines", { result: result[1] });
+            //   }
+            // );
             console.log("message Published w/ timetoken", response.timetoken);
           }
         }
@@ -210,6 +208,73 @@ module.exports = function(io) {
 
     //io.sockets.emit('serverSpeaks', "Hello Clients I am Server")
   });
+
+  const updateTimerInDataBase = (io, minutesLeft, recordId, userid, channel) => {
+    console.log('updateTimerInDataBase -> minutesLeft', minutesLeft)
+    const updateMinutesLeftQuery = 'update timer set minutes_left = ?, last_updated_at = ? where id = ?';
+    pool.query(updateMinutesLeftQuery, [minutesLeft, new Date(), recordId], (err, result) => {
+      if (err) {
+        console.log('updateTimerInDataBase', err);
+        throw err;
+      } else {
+        io.emit('timerUpdated', {
+          timer: minutesLeft,
+          userid,
+          channel
+        });
+      }
+    })
+    // console.log('updateTimerInDataBase', minutesLeft, recordId)
+  }
+
+  const startTimer = (io, channel, userid) => {
+    let minutesLeft = 5;
+    const insertTimerQuery = 'insert into timer(channel, userid, minutes_left, created_at) values(?,?,?,?)';
+    pool.query(insertTimerQuery, [channel, userid, minutesLeft, new Date()], (err, result) => {
+      if (err) {
+        console.log('startTimer', err);
+        throw err;
+      } else {
+        // console.log('startTimer', minutesLeft, result)
+        io.emit('startTimer', {
+          timer: minutesLeft,
+          userid,
+          channel
+        });
+        const recordId = result.insertId;
+        const _this = this;
+        console.log("here we got record id", recordId);
+        const intervalRef = setInterval(() => {
+          // console.log("Inside the callback", minutesLeft, recordId, userid, channel);
+          updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel)
+        }, 3600);
+
+        setTimeout(() => {
+          clearInterval(intervalRef);
+          TurnMachineOFF(channel, userid);
+          io.emit('stopTimer', {
+            timer: "0",
+            userid,
+            channel
+          });
+        }, 3600 * 5);
+      }
+    })
+  }
+
+  const TurnMachineOFF = (channel, userid) => {
+    pubnub.publish(
+      {
+        channel: channel,
+        message: `off,${userid}`
+      },
+      function(status, response) {
+        if (status.error) {
+          console.log(status);
+        }
+      }
+    );
+  }
 
   return router;
 };
