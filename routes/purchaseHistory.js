@@ -21,7 +21,10 @@ router.get('/single/:id', (req, res) => {
         }
     })
 })
-
+//for admin show purchese history
+router.get('/purchese_history',(req,res)=>{
+    res.render('user/Purchesehistory');
+})
 router.get('/delete/:id', (req, res) => {
     const {
         id
@@ -43,6 +46,21 @@ router.get('/delete/:id', (req, res) => {
 router.get('/all', (req, res) => {
     const query = `SELECT ph.id, u.name, p.name, p.logo, ph.amount FROM 
                 purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id`
+    pool.query(query, (err, result) => {
+        if (err) {
+            console.log(err)
+            res.json({
+                result: false
+            })
+        } else {
+            res.json({
+                result
+            })
+        }
+    })
+})
+router.get('/displayHistory', (req, res) => {
+    const query = `SELECT ph.id, u.id as user_id, u.name as user_name, p.name, p.logo, ph.amount FROM purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id`
     pool.query(query, (err, result) => {
         if (err) {
             console.log(err)
