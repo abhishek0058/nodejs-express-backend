@@ -1,8 +1,8 @@
 var history=[]
-$.getJSON(`/purchaseHistory/displayHistory`, result => showPurcheseHistory(result))
+$.getJSON(`/purchaseHistory/displayHistory`, result => {showPurcheseHistory(result)})
 
 showPurcheseHistory=data=>{ 
-// console.log(data);
+console.log("list",data);
 
 var showHistory = `<table class='table table-bordered'>
 
@@ -18,21 +18,20 @@ var showHistory = `<table class='table table-bordered'>
     $('#history_puchese').html(showHistory);
 }
 $(document).ready(()=>{
-    var result=[]
-    $.getJSON(`/user/all`, data =>{
-        result=data
-        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.id)
-        .text(item.name)))})
-        $(`#user`).change(()=>{
-           
-            console.log(result.result);
-            
-            const user = result.result.filter(item => item.user_id == $(`#user`).val())
-            console.log(user);
-            showPurcheseHistory(user)
+    
+    $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
+       
+        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id)
+        .text(item.user_name)))
+    })
+        $(`#user`).change(()=>{       
+            $.getJSON(`/purchaseHistory/displayHistory`, result => {
+                var user= result.result.filter(item => item.user_id == $(`#user`).val())
+                console.log("user", user);
+                 user['result'] = user
+                showPurcheseHistory(user)
+            })
         })
-
-
     })
 
 
