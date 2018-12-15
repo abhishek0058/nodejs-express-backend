@@ -23,7 +23,7 @@ router.get('/single/:id', (req, res) => {
 })
 //for admin show purchese history
 router.get('/purchese_history',(req,res)=>{
-    res.render('user/Purchesehistory');
+    res.render('user/purchesehistory');
 })
 router.get('/delete/:id', (req, res) => {
     const {
