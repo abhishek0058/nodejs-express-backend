@@ -139,19 +139,43 @@ module.exports = function(io) {
   pubnub.addListener({
     message: function(data) {
       const { message, channel } = data;
-      console.log(message)
-      
-      const type = message.split("#")[0];
-      const userid = message.split("#")[1];
 
+      const type = message.split("#")[0];
+      const restOfTheData = message.split("#")[1];
+      
       if (type == "TURNEDON") {
-        emitFreshMachinesStatusAfterTurningOn(io, channel, userid);
-        startTimer(io, channel, userid);
-      } else if (type == "TURNEDOFF") {
+        emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
+        startTimer(io, channel, restOfTheData);
+      }
+      else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
-      } else if (message == "TRUE") {
+      }
+      else if (type == "TRUE") {
         console.log("machine " + channel + " is active");
         emitFreshStatus(io, channel);
+      }
+      else if(type == "MON") {
+        io.emit('machineIsOn', {
+          userid,
+          channel
+        });
+      }
+      else if(type == "MOFF") {
+        const userid = message.split("#")[1];
+        const channel = message.split("#")[2];
+        const minutesLeft = message.split("#")[3];
+        const recordId = message.split("#")[4];
+        pool.query('insert into machine_off_status(main_recordid, created_at) values(?,?)', [recordId, new Date()], (err, result) => {
+          if(err) {
+            console.log("err", err)
+          } else {
+            console.log("record is saved");
+          }
+        })
+        io.emit('machineISOff', {
+          userid,
+          channel
+        });
       }
     }
   });
@@ -245,7 +269,17 @@ module.exports = function(io) {
         const _this = this;
         console.log("here we got record id", recordId);
         const intervalRef = setInterval(() => {
-          // console.log("Inside the callback", minutesLeft, recordId, userid, channel);
+          pubnub.publish(
+            {
+              channel: channel,
+              message: `ms,${userid}#${channel}#${minutesLeft}#${recordId}`
+            },
+            function(status, response) {
+              if (status.error) {
+                console.log(status);
+              }
+            }
+          );
           updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel)
         }, 3600);
 
