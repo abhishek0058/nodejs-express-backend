@@ -7,8 +7,8 @@ console.log(data['result']);
 			<div class="row">
 				<div class="col-sm-12 col-md-12">
 					<div class="page-title">
-						<h2 class="lead">Recharge Plane?</h2>
-						<p class="sublead" style="font-size:29px;">Cost Per Wash Cycle - Rs.40/-</p>
+						<h2 class="lead">Recharge Plan</h2>
+						<p class="sublead" style="font-size:29px;"><strong>Cost Per Wash Cycle as low as Rs.40/-</strong></p>
 						<hr>
 					</div>
 				</div>
@@ -32,9 +32,6 @@ console.log(data['result']);
 								</tbody>
 							</table>
 						</div>
-						<footer class="panel-footer">
-							<a href="#" class="btn btn-primary btn-block">ORDER NOW</a>
-						</footer>
 					</div>
 		
 				</div>`
