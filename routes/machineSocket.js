@@ -24,8 +24,8 @@ module.exports = function(io) {
   const removeActivatorUser = `update machine set activator_user = '' where channel = ?;`;
 
   const pubnub = new PubNub({
-    publishKey: "pub-c-41a12f2d-6208-45aa-aa2b-bb08116d820c",
-    subscribeKey: "sub-c-c0ef660a-9ece-11e8-9a7c-62794ce13da1"
+    publishKey: "pub-c-39811f57-53a9-4f4d-8aaa-83631e8f34c9",
+    subscribeKey: "sub-c-99a0ff36-0419-11e9-ba8a-aef4d14eb57e"
   });
 
   function makeArrayOfStrings(result) {
