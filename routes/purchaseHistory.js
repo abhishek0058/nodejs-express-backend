@@ -115,7 +115,7 @@ router.get(`/DailyReport`,(req,res)=>{
 })
 //Daily report
 router.get('/userPurchasesDailyReport', (req, res) => {
-    const query = `SELECT ph.id, u.id as userid, p.id as packageid, u.name, p.name, p.logo, ph.amount, ph.date FROM 
+    const query = `SELECT ph.id,u.name as user_name, u.id as userid, p.id as packageid, u.name, p.name, p.logo, ph.amount, ph.date FROM 
                 purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id and ph.date = CURDATE()
                 order by id desc`
     pool.query(query, (err, result) => {
