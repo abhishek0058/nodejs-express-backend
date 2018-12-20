@@ -257,18 +257,17 @@ module.exports = function(io) {
   const updateTimerInDataBase = (io, minutesLeft, recordId, userid, channel) => {
     console.log('updateTimerInDataBase -> minutesLeft', minutesLeft)
     const updateMinutesLeftQuery = 'update timer set minutes_left = ?, last_updated_at = ? where id = ?';
+    io.emit('timerUpdated', {
+      timer: minutesLeft,
+      userid,
+      channel
+    });
     pool.query(updateMinutesLeftQuery, [minutesLeft, new Date(), recordId], (err, result) => {
       if (err) {
         console.log('updateTimerInDataBase', err);
         // throw err;
-      } else {
-        io.emit('timerUpdated', {
-          timer: minutesLeft,
-          userid,
-          channel
-        });
       }
-    })
+    });
     // console.log('updateTimerInDataBase', minutesLeft, recordId)
   }
 
