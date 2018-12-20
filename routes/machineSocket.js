@@ -26,7 +26,6 @@ module.exports = function(io) {
   const pubnub = new PubNub({
     publishKey: "pub-c-39811f57-53a9-4f4d-8aaa-83631e8f34c9",
     subscribeKey: "sub-c-99a0ff36-0419-11e9-ba8a-aef4d14eb57e",
-    // logVerbosity: true,
   });
 
   function makeArrayOfStrings(result) {
