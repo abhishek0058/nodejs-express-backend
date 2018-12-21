@@ -325,6 +325,14 @@ module.exports = function(io) {
 
   const TurnMachineOFF = (channel, userid) => {
     try {
+      const MakingMachineInactiveAndFree = `update machine set status = "inactive", activator_user = "" where channel = ?`;
+      pool.query(MakingMachineInactiveAndFree, [channel], (err, result) => {
+        if(err) {
+          console.log("TurnMachineOFF -> MakingMachineInactiveAndFree", err);
+        } else {
+          console.log("MakingMachineInactiveAndFree DONE");
+        }
+      })
       pubnub.publish({
           channel: channel,
           message: `off,${userid}`
