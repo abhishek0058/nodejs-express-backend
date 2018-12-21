@@ -16,13 +16,16 @@ function submitForm(){
     var name = $("#name").val();
     var email = $("#email").val();
     var message = $("#message").val();
-
+    var mobile=$('#mobile').val();
+    var city=$('#city').val();
+    var address=$('#address').val();
     $.ajax({
         type: "POST",
-        url: "php/form-process.php",
-        data: "name=" + name + "&email=" + email + "&message=" + message,
-        success : function(text){
-            if (text == "success"){
+        url: "/queryies/",
+        data: `name=${name}&email=${email}&city=${city}&address=${address}&mobile=${mobile}&message=${message}`,
+        success : function(text){ 
+        
+            if (text['result']) {
                 formSuccess();
             } else {
                 formError();
