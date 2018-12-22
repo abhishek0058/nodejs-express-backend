@@ -177,8 +177,8 @@ module.exports = function(io) {
       }
       else if(type == "MON") {
         io.emit('machineIsOn', {
-          userid,
-          channel
+          userid: message.split("#")[1],
+          channel: message.split("#")[2]
         });
       }
       else if(type == "MOFF") {
