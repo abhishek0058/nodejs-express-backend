@@ -1,3 +1,4 @@
+require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -6,7 +7,6 @@ var logger = require('morgan');
 var cors = require('cors');
 var socket = require( "socket.io" );
 var cookieSession = require('cookie-session')
-
 var io = socket();
 var app = express();
 
