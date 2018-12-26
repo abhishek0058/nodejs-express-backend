@@ -272,7 +272,7 @@ module.exports = function(io) {
   }
 
   const startTimer = (io, channel, userid) => {
-    let minutesLeft = 90;
+    let minutesLeft = 2;
     const insertTimerQuery = 'insert into timer(channel, userid, minutes_left, created_at) values(?,?,?,?)';
     pool.query(insertTimerQuery, [channel, userid, minutesLeft, new Date()], (err, result) => {
       if (err) {
