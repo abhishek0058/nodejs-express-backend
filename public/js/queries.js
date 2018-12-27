@@ -1,9 +1,9 @@
 var history = []
-$.getJSON(`/queryies/all`, result => {
-    showQueryies(result)
+$.getJSON(`/queries/all`, result => {
+    showQueries(result)
 })
-showQueryies = data => {
-    var showQueryies = `<table class='table table-bordered'>
+showQueries = data => {
+    var showQueries = `<table class='table table-bordered'>
 
                     <thead>
                     <th>S No.</th>
@@ -14,7 +14,7 @@ showQueryies = data => {
                     <th>Message</th>
                     <th>Date</th>`
     $.each(data['result'], (i, item) => {
-        showQueryies += `<tr>
+        showQueries += `<tr>
                         <td>${i+1}</td>
                         <td>${item.name}</td>
                         <td>${item.email}</td>
@@ -24,5 +24,5 @@ showQueryies = data => {
                         <td>${item.current_date}</td>
                         </tr>`
     })
-    $('#result').html(showQueryies);
+    $('#result').html(showQueries);
 }

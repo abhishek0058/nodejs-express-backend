@@ -17,8 +17,8 @@ router.post('/', (req, res) => {
         }
     })
 })
-router.get('/showQueryies', function (req, res, next) {
-    res.render('Queryies/ShowAll');
+router.get('/showQueries', function (req, res, next) {
+    res.render('Queries/ShowAll');
 })
 router.get('/all',(req,res,next)=>{
     const query=`SELECT * from queryies ORDER BY id DESC`;
