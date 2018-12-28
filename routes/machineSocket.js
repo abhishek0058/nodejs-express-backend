@@ -176,23 +176,41 @@ module.exports = function(io) {
         emitFreshStatus(io, channel);
       }
       else if(type == "MON") {
+        const userid = message.split("#")[1];
+        const channel = message.split("#")[2];
+        const minutesLeft = message.split("#")[3];
+        const recordId = message.split("#")[4];
+        const intervalRef = message.split("#")[5];
+        updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
+
         io.emit('machineIsOn', {
           userid: message.split("#")[1],
           channel: message.split("#")[2]
         });
+
+        if(minutesLeft == 1) {
+          console.log("Times up", minutesLeft);
+          clearInterval(intervalRef);
+          TurnMachineOFF(channel, userid);
+          io.emit('stopTimer', {
+            timer: "0",
+            userid,
+            channel
+          });
+        }
       }
       else if(type == "MOFF") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
         const minutesLeft = message.split("#")[3];
         const recordId = message.split("#")[4];
-        pool.query('insert into machine_off_status(main_recordid, created_at) values(?,?)', [recordId, new Date()], (err, result) => {
-          if(err) {
-            console.log("err", err)
-          } else {
-            console.log("record is saved");
-          }
-        })
+        // pool.query('insert into machine_off_status(main_recordid, created_at) values(?,?)', [recordId, new Date()], (err, result) => {
+        //   if(err) {
+        //     console.log("err", err)
+        //   } else {
+        //     console.log("record is saved");
+        //   }
+        // })
         io.emit('machineISOff', {
           userid,
           channel
@@ -296,7 +314,7 @@ module.exports = function(io) {
           try {
             pubnub.publish({
                 channel: channel,
-                message: `ms,${userid}#${channel}#${minutesLeft}#${recordId}`
+                message: `ms,${userid}#${channel}#${minutesLeft}#${recordId}#${intervalRef}`
               },
               function (status, response) {
                 if (status.error) {
@@ -307,18 +325,18 @@ module.exports = function(io) {
           } catch (err) {
             console.log("startTimer -> PUBNUB UPDATE", err)
           }
-          updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel)
+          // updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel)
         }, singleIteration);
 
-        setTimeout(() => {
-          clearInterval(intervalRef);
-          TurnMachineOFF(channel, userid);
-          io.emit('stopTimer', {
-            timer: "0",
-            userid,
-            channel
-          });
-        }, totalTime);
+        // setTimeout(() => {
+        //   clearInterval(intervalRef);
+        //   TurnMachineOFF(channel, userid);
+        //   io.emit('stopTimer', {
+        //     timer: "0",
+        //     userid,
+        //     channel
+        //   });
+        // }, totalTime);
       }
     })
   }
