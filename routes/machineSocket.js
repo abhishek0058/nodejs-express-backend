@@ -178,7 +178,7 @@ module.exports = function(io) {
       else if(type == "MON") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
-        const minutesLeft = message.split("#")[3];
+        let minutesLeft = message.split("#")[3];
         const recordId = message.split("#")[4];
         const intervalRef = message.split("#")[5];
         updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
