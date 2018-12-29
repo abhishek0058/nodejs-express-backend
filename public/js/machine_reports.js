@@ -1,5 +1,5 @@
 var machine=[]
- $.getJSON(`/machineReports/machine_status_json`,async result=>await machine.push(result['result']))
+ $.getJSON(`/machineReports/machine_status_json`, result=> machine.push(result['result']))
  $(document).ready(()=>{
 showAll=machine=>{
     var thead=''
@@ -16,7 +16,7 @@ showAll=machine=>{
 
 var tbody=`<tbody>`
 $.each(machine,(i,item)=>{
-    
+    var user=(item.user===NULL)?'':item.user
     tbody+=`<tr>
         <td>${i+1}</td>
         <td>${item.id}</td>
@@ -25,7 +25,7 @@ $.each(machine,(i,item)=>{
         <td>${item.hostel}</td>
         <td>${item.status}</td>
         <td>${item.channel}</td>
-        <td>${item.activator_user}</td>
+        <td>${user}</td>
         </tr>`
 })
 var table=`${thead+tbody}</tbody></table>`

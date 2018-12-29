@@ -7,5 +7,5 @@ const pool = mysql.createPool({
     multipleStatements: true,
     connectionLimit: 100
 })
-
+console.log(process.env.DB_USER);
 module.exports = pool; 
