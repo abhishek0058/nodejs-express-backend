@@ -19,7 +19,7 @@ module.exports = function(io) {
 
   const paymentFromAccount = `update account set cycles_left = cycles_left - 1 where userid = ?;`;
   const activator_user = `update machine set activator_user = ? where channel = ?;`;
-  const insertCycleHistory = `insert into cycle_use_history (userid, date) values (?, '${new Date().toString()}');`;
+  const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (?, ?, '${new Date().toString()}');`;
 
   const removeActivatorUser = `update machine set activator_user = '' where channel = ?;`;
 
@@ -85,7 +85,7 @@ module.exports = function(io) {
       activator_user +
       insertCycleHistory +
       query;
-    const args = [channel, userid, userid, channel, userid, channel, channel];
+    const args = [channel, userid, userid, channel, userid, channel, channel, channel];
     try {
       pool.query(bigQuery, args, (err, result) => {
         if (err) console.log(err);
@@ -290,7 +290,7 @@ module.exports = function(io) {
   }
 
   const startTimer = (io, channel, userid) => {
-    let minutesLeft = 2;
+    let minutesLeft = 90;
     const insertTimerQuery = 'insert into timer(channel, userid, minutes_left, created_at) values(?,?,?,?)';
     pool.query(insertTimerQuery, [channel, userid, minutesLeft, new Date()], (err, result) => {
       if (err) {
