@@ -1,4 +1,4 @@
-module.exports = function(io) {
+module.exports = function (io) {
   var app = require("express");
   var router = app.Router();
   var PubNub = require("pubnub");
@@ -41,7 +41,7 @@ module.exports = function(io) {
       pubnub.subscribe({
         channels: channels
       });
-    } catch(err) {
+    } catch (err) {
       console.log("refresh -> ", errr)
     }
   }
@@ -51,17 +51,17 @@ module.exports = function(io) {
     for (let i = 0; i < channels.length; i++) {
       try {
         pubnub.publish({
-          message: "check," + i,
-          channel: channels[i]
-        },
-        function(status, response) {
-          if (status.error) {
-            console.log("publishChecks", status);
-          } else {
-            console.log("message Published w/ timetoken", response.timetoken);
-          }
-        });
-      } catch(err) {
+            message: "check," + i,
+            channel: channels[i]
+          },
+          function (status, response) {
+            if (status.error) {
+              console.log("publishChecks", status);
+            } else {
+              console.log("message Published w/ timetoken", response.timetoken);
+            }
+          });
+      } catch (err) {
         console.log("publish Checks", err)
       }
     }
@@ -90,7 +90,9 @@ module.exports = function(io) {
       pool.query(bigQuery, args, (err, result) => {
         if (err) console.log(err);
         else {
-          io.sockets.emit("newMachines", { result: result[4] });
+          io.sockets.emit("newMachines", {
+            result: result[4]
+          });
         }
       });
     } catch (e) {
@@ -106,7 +108,9 @@ module.exports = function(io) {
         (err, result) => {
           if (err) console.log(err);
           else {
-            io.sockets.emit("newMachines", { result: result[2] });
+            io.sockets.emit("newMachines", {
+              result: result[2]
+            });
           }
         }
       );
@@ -117,13 +121,14 @@ module.exports = function(io) {
 
   function emitFreshStatus(io, channel) {
     pool.query(makeMachineActiveIfNotBusy, [channel], (err, result) => {
-      if (err)  {
+      if (err) {
         console.log("emitFreshStatus -> makeMachineActiveIfNotBusy", err);
-      }
-      else {
+      } else {
         pool.query(query, [channel, channel], (err, result) => {
           if (err) console.log(err);
-          else io.sockets.emit("newMachines", { result: result });
+          else io.sockets.emit("newMachines", {
+            result: result
+          });
         });
       }
     });
@@ -140,7 +145,10 @@ module.exports = function(io) {
   });
 
   router.get("/ByCityAndHostel/:cityid/:hostelid", (req, res) => {
-    const { cityid, hostelid } = req.params;
+    const {
+      cityid,
+      hostelid
+    } = req.params;
     publishForUser(cityid, hostelid);
     const query = `${makeMachinesInActive};select *, 
                   (select name from hostel where id = machine.hostelid) as hostelname,
@@ -149,33 +157,37 @@ module.exports = function(io) {
     pool.query(query, [cityid, hostelid], (err, result) => {
       if (err) {
         console.log(err);
-        res.json({ result: [] });
+        res.json({
+          result: []
+        });
       } else {
-        res.json({ result: result[1] });
+        res.json({
+          result: result[1]
+        });
       }
     });
   });
 
   pubnub.addListener({
-    message: function(data) {
+    message: function (data) {
       // console.log("addListener", data);
-      const { message, channel } = data;
+      const {
+        message,
+        channel
+      } = data;
 
       const type = message.split("#")[0];
       const restOfTheData = message.split("#")[1];
-      
+
       if (type == "TURNEDON") {
         emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
         startTimer(io, channel, restOfTheData);
-      }
-      else if (type == "TURNEDOFF") {
+      } else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
-      }
-      else if (type == "TRUE") {
+      } else if (type == "TRUE") {
         console.log("machine " + channel + " is active");
         emitFreshStatus(io, channel);
-      }
-      else if(type == "MON") {
+      } else if (type == "MON") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
         let minutesLeft = message.split("#")[3];
@@ -188,7 +200,7 @@ module.exports = function(io) {
           channel: message.split("#")[2]
         });
 
-        if(minutesLeft == 1) {
+        if (minutesLeft == 1) {
           console.log("Times up", minutesLeft);
           clearInterval(intervalRef);
           TurnMachineOFF(channel, userid);
@@ -198,8 +210,7 @@ module.exports = function(io) {
             channel
           });
         }
-      }
-      else if(type == "MOFF") {
+      } else if (type == "MOFF") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
         const minutesLeft = message.split("#")[3];
@@ -223,18 +234,17 @@ module.exports = function(io) {
     console.log("New User connected", socket.id);
 
     socket.on("disconnect", () => {
-        console.log(`disconnecting client`, socket.id)
-        socket.disconnect(true);
+      console.log(`disconnecting client`, socket.id)
+      socket.disconnect(true);
     })
 
     socket.on("machineOn", info => {
-        console.log(info)
-      pubnub.publish(
-        {
+      console.log(info)
+      pubnub.publish({
           channel: info.channel,
           message: `on,${info.userid}`
         },
-        function(status, response) {
+        function (status, response) {
           if (status.error) {
             console.log("machineOn", status);
           } else {
@@ -246,12 +256,11 @@ module.exports = function(io) {
 
     socket.on("machineOff", info => {
       console.log("turning machine off with cahnnel id - " + info.channel);
-      pubnub.publish(
-        {
+      pubnub.publish({
           channel: info.channel,
           message: `off,${info.userid}`
         },
-        function(status, response) {
+        function (status, response) {
           if (status.error) {
             console.log("machineOff", status);
           } else {
@@ -309,19 +318,28 @@ module.exports = function(io) {
 
         const singleIteration = 60000; // 1 minute
         const totalTime = 60000 * 90; // 90 minutes
-        
+
         const intervalRef = setInterval(() => {
           try {
-            pubnub.publish({
-                channel: channel,
-                message: `ms,${userid}#${channel}#${minutesLeft}#${recordId}#${intervalRef}`
-              },
-              function (status, response) {
-                if (status.error) {
-                  console.log("intervalRef", status);
-                }
+            const fetchMinutesLeftFromTimer = `select minutes_left from timer where id = ?`;
+            pool.query(fetchMinutesLeftFromTimer, [recordId], (err, resultMinutesLeft) => {
+              if (err) {
+                console.log("fetchMinutesLeftFromTimer", err)
+              } else {
+                const refreshedMinutesLeft = resultMinutesLeft[0].minutes_left;
+                pubnub.publish({
+                    channel: channel,
+                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${intervalRef}`
+                  },
+                  function (status, response) {
+                    if (status.error) {
+                      console.log("intervalRef", status);
+                    }
+                  }
+                );
               }
-            );
+            })
+
           } catch (err) {
             console.log("startTimer -> PUBNUB UPDATE", err)
           }
@@ -345,7 +363,7 @@ module.exports = function(io) {
     try {
       const MakingMachineInactiveAndFree = `update machine set status = "inactive", activator_user = "" where channel = ?`;
       pool.query(MakingMachineInactiveAndFree, [channel], (err, result) => {
-        if(err) {
+        if (err) {
           console.log("TurnMachineOFF -> MakingMachineInactiveAndFree", err);
         } else {
           console.log("MakingMachineInactiveAndFree DONE");
