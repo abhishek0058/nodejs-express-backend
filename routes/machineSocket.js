@@ -327,6 +327,7 @@ module.exports = function (io) {
                 console.log("fetchMinutesLeftFromTimer", err)
               } else {
                 const refreshedMinutesLeft = resultMinutesLeft[0].minutes_left;
+                console.log("refreshedMinutesLeft", refreshedMinutesLeft);
                 pubnub.publish({
                     channel: channel,
                     message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${intervalRef}`
