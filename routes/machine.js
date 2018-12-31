@@ -99,6 +99,7 @@ router.get("/timer/:userid/:channel", (req, res) => {
       console.log("fetch timer error", err);
     }
     else {
+      console.log("fetch timer -> ", channel, (result.length ? result[0].minutes_left : null));
       res.json(result);
     }
   })

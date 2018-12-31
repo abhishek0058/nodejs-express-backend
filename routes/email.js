@@ -72,10 +72,10 @@ const email = (user = {}, type = "", res, key = 0, optional = {}) => {
 
 	transporter.sendMail(mailOptions, (error, info) => {
 		if (error) {
-			console.log(error);
+			console.log("transporter.sendMail", error);
 			res.json({ result: false })
 		} else {
-			console.log(info)
+			console.log("transporter.sendMail", info);
 			res.json({ result: true })
 		}
 	});
