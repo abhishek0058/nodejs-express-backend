@@ -227,7 +227,7 @@ module.exports = function (io) {
         
         console.log("Number(minutesLeft)", Number(minutesLeft))
 
-        if(Number(minutesLeft) >= 1)
+        if(Number(minutesLeft) > 1)
           updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
 
         io.emit('machineIsOn', {
