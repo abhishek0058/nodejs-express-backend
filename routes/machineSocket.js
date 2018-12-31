@@ -256,7 +256,7 @@ module.exports = function (io) {
     socket.on("machineOn", info => {
 
       console.log(info);
-      pool.query(checkIfMachineIsInProcessOrBusy, [channel], (err, resultOfFirstQUery) => {
+      pool.query(checkIfMachineIsInProcessOrBusy, [info.channel], (err, resultOfFirstQUery) => {
         if (err) {
           console.log("checkIfMachineIsInProcessOrBusy -> err", err);
           io.emit("error", {
@@ -269,9 +269,9 @@ module.exports = function (io) {
           resultOfFirstQUery[0].inProcess == "false" &&
           resultOfFirstQUery[0].status == "active"
         ) {
-          pool.query(makeMachineInProcess, [channel], (err2, resultOfSecondQUery) => {
+          pool.query(makeMachineInProcess, [info.channel], (err2, resultOfSecondQUery) => {
             if (err2) {
-              console.log("resultOfSecondQUery -> err", channel, err);
+              console.log("resultOfSecondQUery -> err", info.channel, err);
               io.emit("error", {
                 user: info.userid,
                 channel: info.channel
@@ -293,7 +293,7 @@ module.exports = function (io) {
             }
           })
         } else {
-          console.log("checkIfMachineIsNotBusy -> mcahine is inProcess", channel);
+          console.log("checkIfMachineIsNotBusy -> mcahine is inProcess", info.channel);
           io.emit("error", {
             user: info.userid,
             channel: info.channel
