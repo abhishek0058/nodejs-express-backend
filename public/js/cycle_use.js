@@ -1,6 +1,5 @@
-var cycle=[]
- $.getJSON(`/machineReports/cycle_use_json`,  result =>  cycle.push(result['result']))
- $(document).ready(()=>{
+$(document).ready(()=>{
+    $.getJSON(`/machineReports/cycle_use_json`, async cycle => await showAll(cycle))
      $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
        
         $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id)
@@ -17,7 +16,7 @@ showAll=cycle=>{
             </thead>`
 
 var tbody=`<tbody>`
-$.each(cycle,(i,item)=>{
+$.each(cycle['result'],(i,item)=>{
   console.log(item.user);
   
     tbody+=`<tr>
@@ -30,7 +29,6 @@ $.each(cycle,(i,item)=>{
 var table=`${thead+tbody}</tbody></table>`
 $('#result').html(table);
 }
-showAll(cycle[0]); 
             $.getJSON(`/machineReports/cycle_use_json`, result => {
                 $(`#user`).change(() => {                    
                 var user= result.result.filter(item => item.userid == $(`#user`).val())
