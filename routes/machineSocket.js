@@ -224,15 +224,15 @@ module.exports = function (io) {
             }
           }
         );
-
-        updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
+        if(minutesLeft >= 1)
+          updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
 
         io.emit('machineIsOn', {
           userid: message.split("#")[1],
           channel: message.split("#")[2]
         });
 
-        if (minutesLeft == 1) {
+        if (minutesLeft <= 1) {
           console.log("Times up", minutesLeft);
           clearInterval(intervalRef);
           TurnMachineOFF(channel, userid);
