@@ -24,4 +24,7 @@ router.get('/blog',function(req,res,next){
 router.get('/contact',function(req,res,next){
   res.render('Index/contact');
 })
+router.get('/privacypolicy', function (req, res, next) {
+  res.render('Index/privacypolicy');
+})
 module.exports = router;
