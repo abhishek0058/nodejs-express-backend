@@ -26,6 +26,7 @@ module.exports = function (io) {
   const checkIfMachineIsInProcessOrBusy = `select inProcess, status from machine where channel = ?`;
   const makeMachineInProcess = `update machine set inProcess = "true" where channel = ?`;
   const makeMachineOutOfProcess = `update machine set inProcess = "false" where channel = ?`
+  const getMachineCycleTime = `select cycle_time from machine where channel = ?`
 
   const pubnub = new PubNub({
     publishKey: process.env.PUBLISH_KEY,
@@ -186,7 +187,16 @@ module.exports = function (io) {
 
       if (type == "TURNEDON") {
         emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
-        startTimer(io, channel, restOfTheData);
+        pool.query(getMachineCycleTime, channel, (err, resultTimer) => {
+          if(err) {
+            console.log("getMachineCycleTime ->", getMachineCycleTime);
+            startTimer(io, channel, restOfTheData, 90);
+          }
+          else if(resultTimer && resultTimer.length) {
+            const cycle_time = Number(resultTimer[0].cycle_time);
+            startTimer(io, channel, restOfTheData, (cycle_time > 0 ? cycle_time : 90));
+          }
+        })
       } 
       else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
@@ -346,8 +356,8 @@ module.exports = function (io) {
     // console.log('updateTimerInDataBase', minutesLeft, recordId)
   }
 
-  const startTimer = (io, channel, userid) => {
-    let minutesLeft = 90;
+  const startTimer = (io, channel, userid, cycle_time) => {
+    let minutesLeft = cycle_time;
     const insertTimerQuery = 'insert into timer(channel, userid, minutes_left, created_at) values(?,?,?,?)';
     pool.query(insertTimerQuery, [channel, userid, minutesLeft, new Date()], (err, result) => {
       if (err) {
