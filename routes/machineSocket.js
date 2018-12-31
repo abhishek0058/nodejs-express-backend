@@ -23,9 +23,13 @@ module.exports = function (io) {
 
   const removeActivatorUser = `update machine set activator_user = '' where channel = ?;`;
 
+  const checkIfMachineIsInProcessOrBusy = `select inProcess, status from machine where channel = ?`;
+  const makeMachineInProcess = `update machine set inProcess = "true" where channel = ?`;
+  const makeMachineOutOfProcess = `update machine set inProcess = "false" where channel = ?`
+
   const pubnub = new PubNub({
-    publishKey: "pub-c-39811f57-53a9-4f4d-8aaa-83631e8f34c9",
-    subscribeKey: "sub-c-99a0ff36-0419-11e9-ba8a-aef4d14eb57e",
+    publishKey: process.env.PUBLISH_KEY,
+    subscribeKey: process.env.SUBSCRIBER_KEY
   });
 
   function makeArrayOfStrings(result) {
@@ -84,8 +88,9 @@ module.exports = function (io) {
       paymentFromAccount +
       activator_user +
       insertCycleHistory +
-      query;
-    const args = [channel, userid, userid, channel, userid, channel, channel, channel];
+      query +
+      makeMachineOutOfProcess;
+    const args = [channel, userid, userid, channel, userid, channel, channel, channel, channel];
     try {
       pool.query(bigQuery, args, (err, result) => {
         if (err) console.log(err);
@@ -182,17 +187,34 @@ module.exports = function (io) {
       if (type == "TURNEDON") {
         emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
         startTimer(io, channel, restOfTheData);
-      } else if (type == "TURNEDOFF") {
+      } 
+      else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
-      } else if (type == "TRUE") {
+      } 
+      else if (type == "TRUE") {
         console.log("machine " + channel + " is active");
         emitFreshStatus(io, channel);
-      } else if (type == "MON") {
+      } 
+      else if (type == "MON") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
         let minutesLeft = message.split("#")[3];
         const recordId = message.split("#")[4];
         const intervalRef = message.split("#")[5];
+
+        pubnub.publish({
+            channel: channel,
+            message: `start_relay`
+          },
+          function (status, response) {
+            if (status.error) {
+              console.log("TurnMachineOFF", status);
+            } else {
+              console.log("started_relay", channel);
+            }
+          }
+        );
+
         updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
 
         io.emit('machineIsOn', {
@@ -210,18 +232,11 @@ module.exports = function (io) {
             channel
           });
         }
-      } else if (type == "MOFF") {
+      } 
+      else if (type == "MOFF") {
         const userid = message.split("#")[1];
         const channel = message.split("#")[2];
-        const minutesLeft = message.split("#")[3];
-        const recordId = message.split("#")[4];
-        // pool.query('insert into machine_off_status(main_recordid, created_at) values(?,?)', [recordId, new Date()], (err, result) => {
-        //   if(err) {
-        //     console.log("err", err)
-        //   } else {
-        //     console.log("record is saved");
-        //   }
-        // })
+
         io.emit('machineISOff', {
           userid,
           channel
@@ -239,19 +254,52 @@ module.exports = function (io) {
     })
 
     socket.on("machineOn", info => {
-      console.log(info)
-      pubnub.publish({
-          channel: info.channel,
-          message: `on,${info.userid}`
-        },
-        function (status, response) {
-          if (status.error) {
-            console.log("machineOn", status);
-          } else {
-            console.log("message Published w/ timetoken", response.timetoken);
-          }
+
+      console.log(info);
+      pool.query(checkIfMachineIsInProcessOrBusy, [channel], (err, resultOfFirstQUery) => {
+        if (err) {
+          console.log("checkIfMachineIsInProcessOrBusy -> err", err);
+          io.emit("error", {
+            user: info.userid,
+            channel: info.channel
+          });
+        } else if (
+          resultOfFirstQUery &&
+          resultOfFirstQUery.length &&
+          resultOfFirstQUery[0].inProcess == "false" &&
+          resultOfFirstQUery[0].status == "active"
+        ) {
+          pool.query(makeMachineInProcess, [channel], (err2, resultOfSecondQUery) => {
+            if (err2) {
+              console.log("resultOfSecondQUery -> err", channel, err);
+              io.emit("error", {
+                user: info.userid,
+                channel: info.channel
+              })
+            } else {
+              console.log("resultOfSecondQUery", resultOfSecondQUery);
+              pubnub.publish({
+                  channel: info.channel,
+                  message: `on,${info.userid}`
+                },
+                function (status, response) {
+                  if (status.error) {
+                    console.log("machineOn", status);
+                  } else {
+                    console.log("message Published w/ timetoken", response.timetoken);
+                  }
+                }
+              );
+            }
+          })
+        } else {
+          console.log("checkIfMachineIsNotBusy -> mcahine is inProcess", channel);
+          io.emit("error", {
+            user: info.userid,
+            channel: info.channel
+          });
         }
-      );
+      })
     });
 
     socket.on("machineOff", info => {

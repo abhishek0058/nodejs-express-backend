@@ -91,10 +91,10 @@ router.get("/delete/:id", (req, res) => {
 });
 
 
-router.get("/timer/:userid/:channel", (req, res) => {
-  const { userid, channel } = req.params;
-  const fetchTimer = `select * from timer where userid = ? and channel = ? order by id desc limit 1`
-  pool.query(fetchTimer, [userid, channel], (err, result) => {
+router.get("/timer/:channel", (req, res) => {
+  const { channel } = req.params;
+  const fetchTimer = `select * from timer where minutes_left > 1 and channel = ? order by id desc limit 1`
+  pool.query(fetchTimer, [channel], (err, result) => {
     if(err) {
       console.log("fetch timer error", err);
     }
