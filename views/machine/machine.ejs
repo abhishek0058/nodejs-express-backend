@@ -30,6 +30,9 @@
                 <input type="text" id="channel" class="form-control" placeholder="Channel Name" />
             </div>
             <div class="col-lg-2">
+                <input type="number" id="cycle_time" class="form-control" placeholder="Cycle Time" />
+            </div>
+            <div class="col-lg-2">
                 <button class="btn btn-block" style="float: right;" id="add">Add Machine</button>
             </div>
         </div>
@@ -52,7 +55,8 @@
                 name: $('#name').val(),
                 cityid: parseInt($('#cityid').val()),
                 hostelid: parseInt($('#hostelid').val()),
-                channel: $('#channel').val()
+                channel: $('#channel').val(),
+                cycle_time: $('#cycle_time').val()
             }, data => refresh())
         })
 
@@ -70,7 +74,7 @@
 
         function makeTable(data) {
             let table =
-                "<tr><td>ID</td><td>City</td><td>Hostel</td><td>Machine name</td><td>Channel</td><td>Delete</td></tr>"
+                "<thead><th>ID</th><th>City</th><th>Hostel</th><th>Machine name</th><th>Channel</th><th>Cycle Time</th><th>Delete</th></thead>"
             $.each(data, (i, item) => {
                 table +=
                     `<tr><td>${item.id}</td>
@@ -78,6 +82,7 @@
                     <td>${item.hostelname}</td>
                     <td>${item.name}</td>
                     <td>${item.channel}</td>
+                    <td>${item.cycle_time}</td>
                     <td><button class="btn btn-danger delete" id=${item.id}>Delete</button></td>
                     </tr>`
             })
