@@ -48,6 +48,8 @@ router.get("/all", (req, res) => {
       console.log(err);
       res.json({ result: false });
     } else {
+      console.log(result);
+      
       res.json({ result });
     }
   });
@@ -70,7 +72,7 @@ router.post(`/edit`, (req, res) => {
   const query = `update ${tableName} set ? where id = ? `;
   pool.query(query, [req.body, id], err => {
     if (err) {
-      console.log(err);
+      console.log(err); 
       res.json({ result: false });
     } else {
       res.json({ result: true });
@@ -103,5 +105,28 @@ router.get("/timer/:userid/:channel", (req, res) => {
     }
   })
 })
+router.get('/change_cyle_time', (req, res) => {
+  res.render("machine/change_cycle_time");
+})
+
+router.get("/change_cycle/:machineid/:cycle_time", (req, res) => {
+  const {
+    machineid,
+    cycle_time
+  } = req.params;
+  cycle={cycle_time:cycle_time}
+  const query = `update ${tableName} set ? where id = ? `;
+  pool.query(query, [cycle, machineid], (err, result) => {
+    console.log(query.sql);
+    
+     if (err) {
+      console.log(err);
+      res.json({ result: false });
+    } else {
+      res.json({ result: true });
+    }
+  })
+})
+
 
 module.exports = router;
