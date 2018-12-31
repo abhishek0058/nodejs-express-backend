@@ -1,5 +1,5 @@
 $(document).ready(()=>{
-    $.getJSON(`/machineReports/cycle_use_json`, async cycle => await showAll(cycle))
+    $.getJSON(`/machineReports/cycle_use_json`, async cycle => await showAll(cycle['result']))
      $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
        
         $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id)
@@ -16,7 +16,7 @@ showAll=cycle=>{
             </thead>`
 
 var tbody=`<tbody>`
-$.each(cycle['result'],(i,item)=>{
+$.each(cycle,(i,item)=>{
   console.log(item.user);
   
     tbody+=`<tr>
@@ -30,10 +30,10 @@ var table=`${thead+tbody}</tbody></table>`
 $('#result').html(table);
 }
             $.getJSON(`/machineReports/cycle_use_json`, result => {
-                $(`#user`).change(() => {                    
-                var user= result.result.filter(item => item.userid == $(`#user`).val())
-                console.log(user);
-                showAll(user)
+                $(`#user`).change(() => {          console.log("before user ",result.result)          
+                var cycle= result.result.filter(item => item.userid == $(`#user`).val())
+                console.log(cycle);
+                showAll(cycle)
             })
         })
     })

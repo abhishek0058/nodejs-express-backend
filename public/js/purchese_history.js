@@ -1,9 +1,5 @@
-var history=[]
-$.getJSON(`/purchaseHistory/displayHistory`, result => {showPurcheseHistory(result)})
-
+$.getJSON(`/purchaseHistory/displayHistory`, result => {showPurcheseHistory(result['result'])})
 showPurcheseHistory=data=>{ 
-console.log("list",data);
-
 var showHistory = `<table class='table table-bordered'>
 
                     <thead>
@@ -11,7 +7,7 @@ var showHistory = `<table class='table table-bordered'>
                     <th>User Name</th>
                     <th>Package Name</th>
                     <th>Amount</th>`
-    $.each(data['result'],(i,item)=>{
+    $.each(data,(i,item)=>{
             showHistory +=`<tr>
                         <td>${i+1}</td><td>${item.user_name}</td><td>${item.name}</td><td>${item.amount}</td></tr>`
     })
@@ -27,8 +23,6 @@ $(document).ready(()=>{
         $(`#user`).change(()=>{       
             $.getJSON(`/purchaseHistory/displayHistory`, result => {
                 var user= result.result.filter(item => item.user_id == $(`#user`).val())
-                console.log("user", user);
-                 user['result'] = user
                 showPurcheseHistory(user)
             })
         })
