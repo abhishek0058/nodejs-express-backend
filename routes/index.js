@@ -27,4 +27,7 @@ router.get('/contact',function(req,res,next){
 router.get('/privacypolicy', function (req, res, next) {
   res.render('Index/privacypolicy');
 })
+router.get('/refundpolicy', function (req, res, next) {
+  res.render('Index/refundpolicy');
+})
 module.exports = router;
