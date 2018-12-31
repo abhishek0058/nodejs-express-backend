@@ -226,6 +226,7 @@ module.exports = function (io) {
         );
         
         console.log("Number(minutesLeft)", Number(minutesLeft))
+        console.log("intervalRef", intervalRef);
 
         if(Number(minutesLeft) > 1)
           updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
@@ -236,8 +237,8 @@ module.exports = function (io) {
         });
 
         if (Number(minutesLeft) <= 1) {
-          console.log("Times up", minutesLeft);
-          clearInterval(intervalRef);
+          console.log("Times up", minutesLeft, "clearing Interval with ->", intervalRef);
+          clearInterval(Number(intervalRef));
           TurnMachineOFF(channel, userid);
           io.emit('stopTimer', {
             timer: "0",
