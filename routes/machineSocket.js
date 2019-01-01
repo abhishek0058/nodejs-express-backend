@@ -212,21 +212,21 @@ module.exports = function (io) {
         const recordId = message.split("#")[4];
         const intervalRef = message.split("#")[5];
 
-        pubnub.publish({
-            channel: channel,
-            message: `start_relay`
-          },
-          function (status, response) {
-            if (status.error) {
-              console.log("TurnMachineOFF", status);
-            } else {
-              console.log("started_relay", channel);
-            }
-          }
-        );
+        // pubnub.publish({
+        //     channel: channel,
+        //     message: `start_relay`
+        //   },
+        //   function (status, response) {
+        //     if (status.error) {
+        //       console.log("TurnMachineOFF", status);
+        //     } else {
+        //       console.log("started_relay", channel);
+        //     }
+        //   }
+        // );
         
-        console.log("Number(minutesLeft)", Number(minutesLeft))
-        console.log("intervalRef", intervalRef);
+        console.log("Number(minutesLeft)", minutesLeft, Number(minutesLeft))
+        console.log("intervalRef", intervalRef, JSON.stringify(intervalRef));
 
         if(Number(minutesLeft) > 1)
           updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
