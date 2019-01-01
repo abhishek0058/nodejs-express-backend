@@ -411,7 +411,7 @@ module.exports = function (io) {
                 // console.log("startTimer -> intervalRef", JSON.stringify(intervalRef));
                 pubnub.publish({
                     channel: channel,
-                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}}`
+                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}`
                   },
                   function (status, response) {
                     if (status.error) {
