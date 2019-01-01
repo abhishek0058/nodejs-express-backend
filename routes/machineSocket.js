@@ -242,7 +242,7 @@ module.exports = function (io) {
 
         if (Number(minutesLeft) <= 1) {
           console.log("Times up", minutesLeft);
-          checkAndStoreIntervalRef(userid, channel);
+          clearIntervalRefFromKeeper(userid, channel);
           TurnMachineOFF(channel, userid);
           io.emit('stopTimer', {
             timer: "0",
@@ -443,7 +443,7 @@ module.exports = function (io) {
     }
   }
 
-  const checkAndStoreIntervalRef = (userid, channel) => {
+  const clearIntervalRefFromKeeper = (userid, channel) => {
     for(let i=0; i<intervalKeeper.length; i++) {
       if(intervalKeeper.userid == userid && intervalKeeper.channel == channel) {
         clearInterval(intervalKeeper[i].intervalRef);
