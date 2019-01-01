@@ -30,7 +30,7 @@ module.exports = function (io) {
 
   const intervalKeeper = [];
   // { userid: 1, channel: 'some-channel', intervalRef: null }
-
+  const usersKeeper = [];
 
   const pubnub = new PubNub({
     publishKey: process.env.PUBLISH_KEY,
@@ -190,17 +190,23 @@ module.exports = function (io) {
       const restOfTheData = message.split("#")[1];
 
       if (type == "TURNEDON") {
-        emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
-        pool.query(getMachineCycleTime, channel, (err, resultTimer) => {
-          if(err) {
-            console.log("getMachineCycleTime ->", getMachineCycleTime);
-            startTimer(io, channel, restOfTheData, 90);
-          }
-          else if(resultTimer && resultTimer.length) {
-            const cycle_time = Number(resultTimer[0].cycle_time);
-            startTimer(io, channel, restOfTheData, (cycle_time > 0 ? cycle_time : 90));
-          }
-        })
+        console.log("calling tuned on");
+        const status = checkAndPushUserToUserKeeperArray(restOfTheData);
+        if(status) {
+          emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
+          pool.query(getMachineCycleTime, channel, (err, resultTimer) => {
+            if(err) {
+              console.log("getMachineCycleTime ->", getMachineCycleTime);
+              startTimer(io, channel, restOfTheData, 90);
+            }
+            else if(resultTimer && resultTimer.length) {
+              const cycle_time = Number(resultTimer[0].cycle_time);
+              startTimer(io, channel, restOfTheData, (cycle_time > 0 ? cycle_time : 90));
+            }
+          })
+        } else {
+          console.log("rejected from addlistner", restOfTheData);
+        }
       } 
       else if (type == "TURNEDOFF") {
         emitFreshMachinesStatusAfterTurningOff(io, channel);
@@ -273,51 +279,57 @@ module.exports = function (io) {
 
     socket.on("machineOn", info => {
 
-      console.log(info);
-      pool.query(checkIfMachineIsInProcessOrBusy, [info.channel], (err, resultOfFirstQUery) => {
-        if (err) {
-          console.log("checkIfMachineIsInProcessOrBusy -> err", err);
-          io.emit("error", {
-            user: info.userid,
-            channel: info.channel
-          });
-        } else if (
-          resultOfFirstQUery &&
-          resultOfFirstQUery.length &&
-          resultOfFirstQUery[0].inProcess == "false" &&
-          resultOfFirstQUery[0].status == "active"
-        ) {
-          pool.query(makeMachineInProcess, [info.channel], (err2, resultOfSecondQUery) => {
-            if (err2) {
-              console.log("resultOfSecondQUery -> err", info.channel, err);
-              io.emit("error", {
-                user: info.userid,
-                channel: info.channel
-              })
-            } else {
-              console.log("resultOfSecondQUery", resultOfSecondQUery);
-              pubnub.publish({
-                  channel: info.channel,
-                  message: `on,${info.userid}`
-                },
-                function (status, response) {
-                  if (status.error) {
-                    console.log("machineOn", status);
-                  } else {
-                    console.log("message Published w/ timetoken", response.timetoken);
+      const status = checkAndPushUserToUserKeeperArray(info.userid);
+      if(status) {
+        console.log("accepted", info);
+        pool.query(checkIfMachineIsInProcessOrBusy, [info.channel], (err, resultOfFirstQUery) => {
+          if (err) {
+            console.log("checkIfMachineIsInProcessOrBusy -> err", err);
+            io.emit("error", {
+              user: info.userid,
+              channel: info.channel
+            });
+          } else if (
+            resultOfFirstQUery &&
+            resultOfFirstQUery.length &&
+            resultOfFirstQUery[0].inProcess == "false" &&
+            resultOfFirstQUery[0].status == "active"
+          ) {
+            pool.query(makeMachineInProcess, [info.channel], (err2, resultOfSecondQUery) => {
+              if (err2) {
+                console.log("resultOfSecondQUery -> err", info.channel, err);
+                io.emit("error", {
+                  user: info.userid,
+                  channel: info.channel
+                })
+              } else {
+                console.log("resultOfSecondQUery", resultOfSecondQUery);
+                pubnub.publish({
+                    channel: info.channel,
+                    message: `on,${info.userid}`
+                  },
+                  function (status, response) {
+                    if (status.error) {
+                      console.log("machineOn", status);
+                    } else {
+                      console.log("message Published w/ timetoken", response.timetoken);
+                    }
                   }
-                }
-              );
-            }
-          })
-        } else {
-          console.log("checkIfMachineIsNotBusy -> mcahine is inProcess", info.channel);
-          io.emit("error", {
-            user: info.userid,
-            channel: info.channel
-          });
-        }
-      })
+                );
+              }
+            })
+          } else {
+            console.log("checkIfMachineIsNotBusy -> mcahine is inProcess", info.channel);
+            io.emit("error", {
+              user: info.userid,
+              channel: info.channel
+            });
+          }
+        })
+      }
+      else {
+        console.log("rejected", info.userid);
+      }
     });
 
     socket.on("machineOff", info => {
@@ -431,7 +443,7 @@ module.exports = function (io) {
   const checkAndStoreIntervalRef = (userid, channel, intervalRef) => {
     var found = false;
     for(let i=0; i<intervalKeeper.length; i++) {
-      if(intervalKeeper.userid == userid && intervalKeeper.channel == channel) {
+      if(intervalKeeper[i].userid == userid && intervalKeeper[i].channel == channel) {
         found = true;
       }
     }
@@ -439,17 +451,36 @@ module.exports = function (io) {
       intervalKeeper.push({
         userid, channel, intervalRef: intervalRef
       });
-      console.log("Added ->", intervalKeeper)
+      console.log("Added ->", intervalKeeper);
     }
   }
 
   const clearIntervalRefFromKeeper = (userid, channel) => {
     for(let i=0; i<intervalKeeper.length; i++) {
-      if(intervalKeeper.userid == userid && intervalKeeper.channel == channel) {
+      if(intervalKeeper[i].userid == userid && intervalKeeper[i].channel == channel) {
         clearInterval(intervalKeeper[i].intervalRef);
         intervalKeeper.splice(i, 1);
-        console.log("cleared ", intervalKeeper)
+        console.log("intervalKeeper cleared ", intervalKeeper[i])
       }
+    }
+    for(let i=0; i<usersKeeper.length; i++) {
+      if(usersKeeper[i] == userid) {
+        usersKeeper.splice(i, 1);
+        console.log("userKeeper cleared ", intervalKeeper)
+      }
+    }
+  }
+
+  const checkAndPushUserToUserKeeperArray = (userid) => {
+    var found = false;
+    for(let i=0; i<usersKeeper.length; i++) {
+      if(usersKeeper[i] == userid) {
+        return false;
+      }
+    }
+    if(!found) {
+      usersKeeper.push(userid);
+      return true;
     }
   }
 
