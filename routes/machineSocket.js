@@ -390,13 +390,14 @@ module.exports = function (io) {
               } else {
                 const refreshedMinutesLeft = resultMinutesLeft[0].minutes_left;
                 console.log("refreshedMinutesLeft", refreshedMinutesLeft);
+                console.log("startTimer -> intervalRef", intervalRef);
                 pubnub.publish({
                     channel: channel,
                     message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${intervalRef}`
                   },
                   function (status, response) {
                     if (status.error) {
-                      console.log("intervalRef", status);
+                      console.log("intervalRef", intervalRef);
                     }
                   }
                 );
