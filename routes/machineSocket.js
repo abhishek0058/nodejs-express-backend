@@ -238,7 +238,7 @@ module.exports = function (io) {
 
         if (Number(minutesLeft) <= 1) {
           console.log("Times up", minutesLeft, "clearing Interval with ->", intervalRef);
-          clearInterval(Number(intervalRef));
+          clearInterval(JSON.parse(intervalRef));
           TurnMachineOFF(channel, userid);
           io.emit('stopTimer', {
             timer: "0",
@@ -390,10 +390,10 @@ module.exports = function (io) {
               } else {
                 const refreshedMinutesLeft = resultMinutesLeft[0].minutes_left;
                 console.log("refreshedMinutesLeft", refreshedMinutesLeft);
-                console.log("startTimer -> intervalRef", intervalRef);
+                console.log("startTimer -> intervalRef", JSON.stringify(intervalRef));
                 pubnub.publish({
                     channel: channel,
-                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${intervalRef}`
+                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${JSON.stringify(intervalRef)}`
                   },
                   function (status, response) {
                     if (status.error) {
