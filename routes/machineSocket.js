@@ -28,6 +28,10 @@ module.exports = function (io) {
   const makeMachineOutOfProcess = `update machine set inProcess = "false" where channel = ?`
   const getMachineCycleTime = `select cycle_time from machine where channel = ?`
 
+  const intervalKeeper = [];
+  // { userid: 1, channel: 'some-channel', intervalRef: null }
+
+
   const pubnub = new PubNub({
     publishKey: process.env.PUBLISH_KEY,
     subscribeKey: process.env.SUBSCRIBER_KEY
@@ -210,7 +214,7 @@ module.exports = function (io) {
         const channel = message.split("#")[2];
         let minutesLeft = message.split("#")[3];
         const recordId = message.split("#")[4];
-        const intervalRef = message.split("#")[5];
+        // const intervalRef = message.split("#")[5];
 
         // pubnub.publish({
         //     channel: channel,
@@ -226,7 +230,7 @@ module.exports = function (io) {
         // );
         
         console.log("Number(minutesLeft)", minutesLeft, Number(minutesLeft))
-        console.log("intervalRef", intervalRef, JSON.stringify(intervalRef));
+        // console.log("intervalRef", intervalRef, JSON.stringify(intervalRef));
 
         if(Number(minutesLeft) > 1)
           updateTimerInDataBase(io, --minutesLeft, recordId, userid, channel);
@@ -237,8 +241,8 @@ module.exports = function (io) {
         });
 
         if (Number(minutesLeft) <= 1) {
-          console.log("Times up", minutesLeft, "clearing Interval with ->", intervalRef);
-          clearInterval(JSON.parse(intervalRef));
+          console.log("Times up", minutesLeft);
+          checkAndStoreIntervalRef(userid, channel);
           TurnMachineOFF(channel, userid);
           io.emit('stopTimer', {
             timer: "0",
@@ -383,6 +387,7 @@ module.exports = function (io) {
 
         const intervalRef = setInterval(() => {
           try {
+            checkAndStoreIntervalRef(userid, channel, intervalRef);
             const fetchMinutesLeftFromTimer = `select minutes_left from timer where id = ?`;
             pool.query(fetchMinutesLeftFromTimer, [recordId], (err, resultMinutesLeft) => {
               if (err) {
@@ -390,10 +395,10 @@ module.exports = function (io) {
               } else {
                 const refreshedMinutesLeft = resultMinutesLeft[0].minutes_left;
                 console.log("refreshedMinutesLeft", refreshedMinutesLeft);
-                console.log("startTimer -> intervalRef", JSON.stringify(intervalRef));
+                // console.log("startTimer -> intervalRef", JSON.stringify(intervalRef));
                 pubnub.publish({
                     channel: channel,
-                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}#${JSON.stringify(intervalRef)}`
+                    message: `ms,${userid}#${channel}#${refreshedMinutesLeft}#${recordId}}`
                   },
                   function (status, response) {
                     if (status.error) {
@@ -421,6 +426,31 @@ module.exports = function (io) {
         // }, totalTime);
       }
     })
+  }
+  
+  const checkAndStoreIntervalRef = (userid, channel, intervalRef) => {
+    var found = false;
+    for(let i=0; i<intervalKeeper.length; i++) {
+      if(intervalKeeper.userid == userid && intervalKeeper.channel == channel) {
+        found = true;
+      }
+    }
+    if(!found) {
+      intervalKeeper.push({
+        userid, channel, intervalRef: intervalRef
+      });
+      console.log("Added ->", intervalKeeper)
+    }
+  }
+
+  const checkAndStoreIntervalRef = (userid, channel) => {
+    for(let i=0; i<intervalKeeper.length; i++) {
+      if(intervalKeeper.userid == userid && intervalKeeper.channel == channel) {
+        clearInterval(intervalKeeper[i].intervalRef);
+        intervalKeeper.splice(i, 1);
+        console.log("cleared ", intervalKeeper)
+      }
+    }
   }
 
   const TurnMachineOFF = (channel, userid) => {
