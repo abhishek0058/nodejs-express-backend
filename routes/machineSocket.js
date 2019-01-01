@@ -31,6 +31,7 @@ module.exports = function (io) {
   const intervalKeeper = [];
   // { userid: 1, channel: 'some-channel', intervalRef: null }
   const usersKeeper = [];
+  const userAssignedAMachine = [];
 
   const pubnub = new PubNub({
     publishKey: process.env.PUBLISH_KEY,
@@ -191,7 +192,7 @@ module.exports = function (io) {
 
       if (type == "TURNEDON") {
         console.log("calling tuned on");
-        const status = checkAndPushUserToUserKeeperArray(restOfTheData);
+        const status = checkAndPushUserToUserAssignedAMachineArray(restOfTheData);
         if(status) {
           emitFreshMachinesStatusAfterTurningOn(io, channel, restOfTheData);
           pool.query(getMachineCycleTime, channel, (err, resultTimer) => {
@@ -448,6 +449,7 @@ module.exports = function (io) {
       }
     }
     if(!found) {
+      console.log("length of intervalRef during push", intervalRef.length);
       intervalKeeper.push({
         userid, channel, intervalRef: intervalRef
       });
@@ -466,7 +468,13 @@ module.exports = function (io) {
     for(let i=0; i<usersKeeper.length; i++) {
       if(usersKeeper[i] == userid) {
         usersKeeper.splice(i, 1);
-        console.log("userKeeper cleared ", intervalKeeper)
+        console.log("userKeeper cleared ", usersKeeper[i])
+      }
+    }
+    for(let i=0; i<userAssignedAMachine.length; i++) {
+      if(userAssignedAMachine[i] == userid) {
+        userAssignedAMachine.splice(i, 1);
+        console.log("userKeeper cleared ", userAssignedAMachine[i])
       }
     }
   }
@@ -483,6 +491,19 @@ module.exports = function (io) {
       return true;
     }
   }
+
+  const checkAndPushUserToUserAssignedAMachineArray = (userid) => {
+    var found = false;
+    for(let i=0; i<userAssignedAMachine.length; i++) {
+      if(userAssignedAMachine[i] == userid) {
+        return false;
+      }
+    }
+    if(!found) {
+      userAssignedAMachine.push(userid);
+      return true;
+    }
+  } 
 
   const TurnMachineOFF = (channel, userid) => {
     try {
