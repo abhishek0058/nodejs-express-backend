@@ -25,6 +25,7 @@ var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
 var ccavReqHandler = require('./routes/ccavRequestHandler.js');
 var ccavResHandler = require('./routes/ccavResponseHandler.js');
+
 app.use(cookieSession({
   name: 'laudrybay',
   keys: ['abhishek0058'],
@@ -46,7 +47,7 @@ app.get('/sample_form', function (req, res){
 });
 
 app.post('/ccavRequestHandler', function (request, response){
-ccavReqHandler.postReq(request, response);
+  ccavReqHandler.postReq(request, response);
 });
 
 
