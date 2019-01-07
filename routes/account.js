@@ -51,6 +51,18 @@ router.post(`/edit`, (req, res) => {
         }
     })
 })
+router.post(`/change_balance/:id/:balance`, (req, res) => {
+    const { id, balance } = req.params
+    const query = `update ${tableName} set cycles_left = ? where id = ? `
+    pool.query(query, [balance, id], err => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result: true })
+        }
+    })
+})
 
 router.get('/single/:id', (req, res) => {
     const { id } = req.params;
