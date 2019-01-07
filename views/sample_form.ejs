@@ -1,6 +1,8 @@
 <html>
+
 <head>
 </head>
+
 <body>
 	<form method="POST" name="customerData" action="/ccavRequestHandler">
 		<table width="40%" height="100" border="1" align="center">
@@ -17,6 +19,10 @@
 				<td colspan="2">Compulsory information</td>
 			</tr>
 			<tr>
+				<td>Currency</td>
+				<td><input type="text" name="currency" value="INR" /></td>
+			</tr>
+			<tr>
 				<td>Merchant Id</td>
 				<td><input type="text" name="merchant_id" id="merchant_id" value="203899" /> </td>
 			</tr>
@@ -25,23 +31,17 @@
 				<td><input type="text" name="order_id" value="12345" /></td>
 			</tr>
 			<tr>
-				<td>Currency</td>
-				<td><input type="text" name="currency" value="INR" /></td>
-			</tr>
-			<tr>
 				<td>Amount</td>
 				<td><input type="text" name="amount" value="1.00" /></td>
 			</tr>
 			<tr>
 				<td>Redirect URL</td>
-				<td><input type="text" name="redirect_url"
-					value="http://laundrybay.in/ccavResponseHandler" />
+				<td><input type="text" name="redirect_url" value="http://laundrybay.in/ccavResponseHandler" />
 				</td>
 			</tr>
 			<tr>
 				<td>Cancel URL</td>
-				<td><input type="text" name="cancel_url"
-					value="http://laundrybay.in/ccavResponseHandler" />
+				<td><input type="text" name="cancel_url" value="http://laundrybay.in/ccavResponseHandler" />
 				</td>
 			</tr>
 			<tr>
@@ -57,8 +57,7 @@
 			</tr>
 			<tr>
 				<td>Billing Address:</td>
-				<td><input type="text" name="billing_address"
-					value="Santacruz" /></td>
+				<td><input type="text" name="billing_address" value="Santacruz" /></td>
 			</tr>
 			<tr>
 				<td>Billing City:</td>
@@ -84,8 +83,7 @@
 			</tr>
 			<tr>
 				<td>Billing Email:</td>
-				<td><input type="text" name="billing_email"
-					value="testing@domain.com" /></td>
+				<td><input type="text" name="billing_email" value="testing@domain.com" /></td>
 			</tr>
 			<tr>
 				<td colspan="2">Shipping information(optional):</td>
@@ -97,8 +95,7 @@
 			</tr>
 			<tr>
 				<td>Shipping Address:</td>
-				<td><input type="text" name="delivery_address"
-					value="Vile Parle" /></td>
+				<td><input type="text" name="delivery_address" value="Vile Parle" /></td>
 			</tr>
 			<tr>
 				<td>Shipping City:</td>
@@ -126,36 +123,31 @@
 			</tr>
 			<tr>
 				<td>Merchant Param1</td>
-				<td><input type="text" name="merchant_param1"
-					value="additional Info." /></td>
+				<td><input type="text" name="merchant_param1" value="additional Info." /></td>
 			</tr>
 			<tr>
 				<td>Merchant Param2</td>
-				<td><input type="text" name="merchant_param2"
-					value="additional Info." /></td>
+				<td><input type="text" name="merchant_param2" value="additional Info." /></td>
 			</tr>
 			<tr>
 				<td>Merchant Param3</td>
-				<td><input type="text" name="merchant_param3"
-					value="additional Info." /></td>
+				<td><input type="text" name="merchant_param3" value="additional Info." /></td>
 			</tr>
 			<tr>
 				<td>Merchant Param4</td>
-				<td><input type="text" name="merchant_param4"
-					value="additional Info." /></td>
+				<td><input type="text" name="merchant_param4" value="additional Info." /></td>
 			</tr>
 			<tr>
 				<td>Merchant Param5</td>
-				<td><input type="text" name="merchant_param5"
-					value="additional Info." /></td>
+				<td><input type="text" name="merchant_param5" value="additional Info." /></td>
 			</tr>
 			<tr>
 				<td>Promo Code:</td>
-				<td><input type="text" name="promo_code" value=""/></td>
+				<td><input type="text" name="promo_code" value="" /></td>
 			</tr>
 			<tr>
 				<td>Customer Id:</td>
-				<td><input type="text" name="customer_identifier" value=""/></td>
+				<td><input type="text" name="customer_identifier" value="" /></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -164,4 +156,5 @@
 		</table>
 	</form>
 </body>
+
 </html>
