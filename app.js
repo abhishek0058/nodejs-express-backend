@@ -18,7 +18,7 @@ var hostel = require('./routes/hostel')
 var machine = require('./routes/machine')
 var package = require('./routes/package')
 var account = require('./routes/account')
-var test = require('./routes/test')(io)
+// var test = require('./routes/test')(io)
 var purchaseHistory = require('./routes/purchaseHistory');
 var machineSocket = require('./routes/machineSocket')(io);
 var queries=require('./routes/queries');
@@ -63,7 +63,7 @@ app.use('/hostel', hostel);
 app.use('/machine', machine);
 app.use('/package', package);
 app.use('/account', account);
-app.use('/test', test);
+// app.use('/test', test);
 app.use('/purchaseHistory', purchaseHistory);
 app.use('/machineSocket', machineSocket);
 app.use('/queries', queries);
