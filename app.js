@@ -23,6 +23,8 @@ var purchaseHistory = require('./routes/purchaseHistory');
 var machineSocket = require('./routes/machineSocket')(io);
 var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
+var ccavReqHandler = require('./routes/ccavRequestHandler.js');
+var ccavResHandler = require('./routes/ccavResponseHandler.js');
 app.use(cookieSession({
   name: 'laudrybay',
   keys: ['abhishek0058'],
@@ -38,6 +40,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/sample_form', function (req, res){
+  res.render('sample_form');
+});
+
+app.post('/ccavRequestHandler', function (request, response){
+ccavReqHandler.postReq(request, response);
+});
+
+
+app.post('/ccavResponseHandler', function (request, response){
+    ccavResHandler.postRes(request, response);
+});
 
 app.use('/', indexRouter);
 app.use('/admin',admin);
