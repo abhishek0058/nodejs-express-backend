@@ -8,12 +8,15 @@ $('#cityid').change(() => {
 $('#result').on('click', '.edit', e => {
          var id = e.target.attributes[0].value
          var cycle_time= $('#cycle_time').val()
-    console.log(cycle_time);
+
     
-    $.get(`/machine/change_cycle/${id}/${cycle_time}`, data => refresh())
+    $.get(`/machine/change_cycle/${id}/${cycle_time}`, data => {
+        refresh();
+         $('.change').attr("disabled", false);
+    })
 })
 $('#result').on('click', '.change', e => {
-    confirm('')
+    $('.change').attr("disabled", true);
     data={
          id : e.target.attributes[0].value,
         city : e.target.attributes[1].value,
@@ -26,8 +29,7 @@ $('#result').on('click', '.change', e => {
    
     
 })
-add=data=>{console.log(data);
-
+add=data=>{
 return (`<tr><td>${data.id}</td><td>${data.city}</td><td>${data.hostel}</td><td>${data.machine}</td><td>${data.channel}</td><td><input type=number style='width:50px' class=form-controll id=cycle_time value=${data.cycle_time}></td><td><button id=${data.id} class='edit btn btn-success'>Change</button></td></tr>`)
 }
 
@@ -55,7 +57,8 @@ function makeTable(data) {
     table += "</table>"
     $('#result').html(table)
 }
-$('#cityid').change(()=>{
+$('#cityid').change(()=>{ 
+    
         $.getJSON('/machine/all', data => {
           var result=data.filter(item=>item.cityid===$('#cityid').val())  
           makeTable(result)

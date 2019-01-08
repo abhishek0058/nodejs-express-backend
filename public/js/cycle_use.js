@@ -17,13 +17,17 @@ showAll=cycle=>{
 
 var tbody=`<tbody>`
 $.each(cycle,(i,item)=>{
-  console.log(item.user);
   
+    var date = new Date(item.date)
+//    console.log(date);
+    // date = `${date.getDay()-1}-${date.getMonth()+1}-${date.getFullYear()}  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+ 
+    
     tbody+=`<tr>
         <td>${i+1}</td>
         <td>${item.id}</td>
         <td>${item.user}</td>
-        <td>${new Date(item.date).toLocaleString()}</td>
+        <td>${date}</td>
         </tr>`
 })
 var table=`${thead+tbody}</tbody></table>`
@@ -32,7 +36,7 @@ $('#result').html(table);
             $.getJSON(`/machineReports/cycle_use_json`, result => {
                 $(`#user`).change(() => {          console.log("before user ",result.result)          
                 var cycle= result.result.filter(item => item.userid == $(`#user`).val())
-                console.log(cycle);
+                
                 showAll(cycle)
             })
         })

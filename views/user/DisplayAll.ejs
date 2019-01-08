@@ -21,27 +21,29 @@ function makeCard(data) {
 	htm+='<center><h3>List of Users</h3></center>'
     htm+='<center><br>'
     htm+='<table class="table table-bordered table-hover" style="">'
-    htm+='<tr>'
-    htm+='<th><b>Id</b></th>'
+    htm+='<thead>'
+    htm+='<th><b> S No.</b></th>'
     htm+='<th><b>Name</b></th>'
     htm+='<th><b>Mobile</b></th>'
     htm+='<th><b>Email</b></th>'
     htm+='<th><b>Account Number</b></th>'
     htm+='<th><b>Balance</b></th>'
-    htm+='</tr>'
+    htm+='<th><b>Change Balance</b></th>'
+    htm+='</thead>'
     // console.log(data)
 	$.each(data.result, function(i, item) {
         $acc=(item.id==0)? '':item.id;
         $bal=(item.cycles_left<0)? '':item.cycles_left;
-        htm+=`<tr>`
-        htm+=`<td>${item.id}</td>`
-        htm+=`<td>${item.name}</td>`
-        htm+=`<td>${item.mobile}</td>`
-        htm+=`<td>${item.email}</td>`
-        htm+=`<td>${$acc}</td>`
-        htm+=`<td>${$bal}</td>`
-        htm+=`</tr> `
-		
+        htm+=`<tr>
+            <td>${i+1}</td>
+            <td>${item.name}</td>
+            <td>${item.mobile}</td>
+            <td>${item.email}</td>
+            <td>${$acc}</td>
+            <td>${$bal}</td>
+            <td><button data='${JSON.stringify(item)}' class='change btn btn-info'>Change Balance</button></td>
+            </tr> `
+            
 	})
 	$('#result').html(htm)
 }
@@ -49,10 +51,44 @@ var url = '/user/DisplayAllJSON'
 		$.getJSON(url, function(data) {
 			makeCard(data)
         })
+        $(document).ready(()=>{
+         
+            $('#result').on('click', '.change', e => {
+               
+                $('.change').attr("disabled", true);
+                data = JSON.parse(e.target.attributes[0].value)
+            $('#result thead').append(add(data))
+            })
+            $('#result').on(`click`,'.edit',e=>{
+                    var balance=$('#balance').val();
+                    var id= e.target.attributes[0].value;
+                 $.post(`/account/change_balance/${id}/${balance}`, data => {
+                   var url = '/user/DisplayAllJSON'
+                     $.getJSON(url, function (data) {
+                         makeCard(data)
+                     })
+                })
+            })  
+        })
+    add=data=>{
+        $acc = (data.id == 0) ? '' : data.id;
+        $bal = (data.cycles_left < 0) ? '' : data.cycles_left;
+        return `<tr>
+            <td>${0}</td>
+            <td>${data.name}</td>
+            <td>${data.mobile}</td>
+            <td>${data.email}</td>
+            <td>${$acc}</td> 
+            <td><input id=balance type=number value='${$bal}' class='form-control'></td>
+            <td><button id='${data.id}'   class='edit btn btn-success'>Change</button></td>
+            </tr> `
+    }
+    
         </script>
 <body>
     <div class='container'>
         <div class="row">
+            <div id="change"></div>
             <div id="result"></div>
         </div>
     </div>
