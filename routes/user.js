@@ -23,48 +23,88 @@ router.post('/login', (req, res) => {
 
 router.post('/new', (req, res) => {
     try {
-        const otp =  Math.floor(100000 + Math.random() * 900000);
-        const { name, email, mobile, password } = req.body;
-        const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
-        console.log("query", query)
-        pool.query(query, (err, result) => {
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        const {
+            name,
+            email,
+            mobile,
+            password
+        } = req.body;
+        
+        const checkIfAlreadyExist = "select * from user, pending_uesrs where mobile = ?";
+
+        pool.query(checkIfAlreadyExist, (err, checkIfAlreadyExistReuslt) => {
             if(err) {
-                console.log("error during insterting pending user", err);
-                return res.json({ result: false });
+                return res.json({ result: false, message: "Mobile Number Already Exist" })
+            } else {
+                const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
+                console.log("query", query)
+                pool.query(query, (err, result) => {
+                    if (err) {
+                        console.log("error during insterting pending user", err);
+                        return res.json({
+                            result: false
+                        });
+                    }
+                    SendOtp(mobile, otp, res);
+                })
             }
-            SendOtp(mobile, otp, res);
         })
+
     } catch (e) {
         console.log("/user/new", e);
-        res.json({ result: false });
+        res.json({
+            result: false
+        });
     }
 })
 
 router.post('/verify_otp', (req, res) => {
     try {
         console.log("verfity Otp -> ", req.body);
-        const { mobile, otp } = req.body
+        const {
+            mobile,
+            otp
+        } = req.body
         pool.query(`select * from pending_users where mobile = ? and otp = ?`, [mobile, otp], (err, result) => {
-            if(err) {
-                return res.json({ status: false, message: "Invalid Otp / Mobile Number" })
-            }
-            else if(result.length) {
-                const { name, email, mobile, password } = result[0];
+            if (err) {
+                return res.json({
+                    status: false,
+                    message: "Invalid Otp / Mobile Number"
+                })
+            } else if (result.length) {
+                const {
+                    name,
+                    email,
+                    mobile,
+                    password
+                } = result[0];
                 // move user from pending_users to users
                 const query = `insert into ${tableName} (name, email, mobile, password) ('${name}', '${email}', '${mobile}', '${password}')`;
                 pool.query(query, (err2, result2) => {
-                    if(err) {
-                        return res.json({ result: false, message: "internal error occurred, please "})
-                    }
-                    else {
-                        return res.json({ result: true, message: "OTP is verfified", data: {...result[0], id: result2.insertId} })
+                    if (err) {
+                        return res.json({
+                            result: false,
+                            message: "internal error occurred, please "
+                        })
+                    } else {
+                        return res.json({
+                            result: true,
+                            message: "OTP is verfified",
+                            data: { ...result[0],
+                                id: result2.insertId
+                            }
+                        })
                     }
                 })
             }
         })
-    } catch(e) {
+    } catch (e) {
         console.log('error in otp', e);
-        res.json({ status: failed, message: "Internal error occurred" });
+        res.json({
+            status: failed,
+            message: "Internal error occurred"
+        });
     }
 })
 
@@ -128,14 +168,14 @@ router.get('/single/:id', (req, res) => {
 })
 
 router.get('/DisplayAll', (req, res) => {
-    if(req.session.id)
+    if (req.session.id)
         res.render('user/DisplayAll')
     else
         res.redirect('/admin');
 });
 
 router.get('/DisplayAllJSON', (req, res) => {
-    if(req.session.id) {
+    if (req.session.id) {
         pool.query(`select U.*,A.* from ${tableName} U, account A WHERE U.id=A.userid`, (err, result) => {
             if (err) {
                 console.log(err)
@@ -148,8 +188,7 @@ router.get('/DisplayAllJSON', (req, res) => {
                 })
             }
         })
-    }
-    else {
+    } else {
         res.redirect('/admin')
     }
 });
@@ -242,12 +281,16 @@ const SendOtp = (mobile, otp, response) => {
         request(options, function (error, result, body) {
             if (error) {
                 console.log("error", error);
-                return response.json({ result: false, message: "Internal server error" });
-            }
-            else {
+                return response.json({
+                    result: false,
+                    message: "Internal server error"
+                });
+            } else {
                 console.log("body", body);
                 console.log("SMS SEND TO -> ", mobile)
-                return response.json({ result: true })
+                return response.json({
+                    result: true
+                })
             }
         });
 
