@@ -25,7 +25,7 @@ router.post('/new', (req, res) => {
     try {
         const otp =  Math.floor(100000 + Math.random() * 900000);
         const { name, email, mobile, password } = req.body;
-        const query = `insert into pending_users (name, email, mobile, password, otp) ('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
+        const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
         console.log("query", query)
         pool.query(query, (err, result) => {
             if(err) {
