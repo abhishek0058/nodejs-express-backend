@@ -151,6 +151,42 @@ router.post('/forget_password', (req, res) => {
     })
 })
 
+router.post('/change_password', (req, res) => {
+    const { otp, mobile, password } = req.body;
+    console.log("change_password -> ", req.body);
+
+    const fetchUserRecord = `select * from user where mobile = ?`;
+
+    pool.query(fetchUserRecord, [mobile], (err, result) => {
+        if(err) {
+            console.log("change_password error -> ", err);
+            return res.json({ result: false, message: "Internal Server Error" })
+        }
+        else if(!result[0]) {
+            console.log("change_password no record found");
+            return res.json({ result: false, message: "Mobile Number not found" })
+        }
+        else if(result[0].mobile_security_key != otp) {
+            console.log("change_password otp invalid", otp, result[0].mobile_security_key);
+            return res.json({ result: false, message: "OTP is invalid" })
+        }
+        else if(result[0].mobile_security_key == otp) {
+            const change_password = "update user set password = ? where mobile = ?";
+            pool.query(change_password, [password, mobile], (err, result) => {
+                if(err) {
+                    console.log("change_password error -> ", err);
+                    return res.json({ result: false, message: "Internal Server Error" })
+                }
+                else {
+                    console.log("change_password -> success", result[0]);
+                    return res.json({ result: true })
+                }
+            })
+        }
+    })
+
+})
+
 // req.post('/verify_otp', (req, res) => {
 //     try {
 //         console.log("verfity Otp -> ", req.body);
