@@ -32,16 +32,7 @@ router.post('/new', (req, res) => {
                 console.log("error during insterting pending user", err);
                 return res.json({ result: false });
             }
-            else {
-                if(SendOtp(mobile, otp)) {
-                    console.log("success");
-                    return res.json({ result: true });
-                }
-                else {
-                    console.log("otp failed");
-                    return res.json({ result: false });
-                }
-            }
+            SendOtp(mobile, otp, res);
         })
     } catch (e) {
         console.log("/user/new", e);
@@ -228,7 +219,7 @@ router.get('/sendVerificationOTP/:userid', (req, res) => {
     res.send(false);
 })
 
-const SendOtp = (mobile, otp) => {
+const SendOtp = (mobile, otp, response) => {
     try {
         var options = {
             method: 'GET',
@@ -251,11 +242,13 @@ const SendOtp = (mobile, otp) => {
         request(options, function (error, response, body) {
             if (error) {
                 console.log("error", error);
-                return false;
+                return response.json({ result: false, message: "Internal server error" });
             }
-            console.log("body", body);
-            console.log("SMS SEND TO -> ", mobile)
-            return true
+            else {
+                console.log("body", body);
+                console.log("SMS SEND TO -> ", mobile)
+                return response.json({ result: true })
+            }
         });
 
     } catch (e) {
