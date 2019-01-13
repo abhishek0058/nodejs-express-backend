@@ -32,11 +32,11 @@ router.post('/new', (req, res) => {
         } = req.body;
         
         const checkIfAlreadyExist = "select * from user, pending_users where user.mobile = ? or pending_users.mobile = ?";
-
         pool.query(checkIfAlreadyExist, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
+            console.log("check If mobile Already Exist Reuslt -> ", checkIfAlreadyExistReuslt);
             if(err) {
                 return res.json({ result: false, message: "Mobile Number Already Exist" })
-            } else if(!checkIfAlreadyExistReuslt.legnth) {
+            } else if(checkIfAlreadyExistReuslt.legnth == 0) {
                 const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
                 console.log("query", query)
                 pool.query(query, (err, result) => {
@@ -79,8 +79,9 @@ router.post('/verify_otp', (req, res) => {
                     mobile,
                     password
                 } = result[0];
+                console.log("from pending user -> ", result);
                 // move user from pending_users to users
-                const query = `insert into ${tableName} (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}')`;
+                const query = `delete from pending_users where mobile = '${mobile}';insert into user (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}')`;
                 console.log("query", query);
                 pool.query(query, (err2, result2) => {
                     if (err) {
@@ -89,6 +90,7 @@ router.post('/verify_otp', (req, res) => {
                             message: "internal error occurred, please "
                         })
                     } else {
+                        console.log("user confirmed", { ...result[0], id: result2.insertId })
                         return res.json({
                             result: true,
                             message: "OTP is verfified",
