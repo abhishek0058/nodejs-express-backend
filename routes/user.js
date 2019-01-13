@@ -239,7 +239,7 @@ const SendOtp = (mobile, otp, response) => {
         };
 
         console.log("options", options)
-        request(options, function (error, response, body) {
+        request(options, function (error, result, body) {
             if (error) {
                 console.log("error", error);
                 return response.json({ result: false, message: "Internal server error" });
