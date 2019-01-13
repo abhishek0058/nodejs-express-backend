@@ -30,14 +30,14 @@ router.post('/new', (req, res) => {
             mobile,
             password
         } = req.body;
-
+        
         const checkIfAlreadyExist = "select * from user, pending_users where user.mobile = ? or pending_users.mobile = ?";
         pool.query(checkIfAlreadyExist, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
             console.log("check If mobile Already Exist Reuslt -> ", checkIfAlreadyExistReuslt);
             if(err) {
                 console.log("error", err)
                 return res.json({ result: false, message: "Mobile Number Already Exist" })
-            } else if(!checkIfAlreadyExistReuslt[0]) {
+            } else if(checkIfAlreadyExistReuslt.legnth == 0) {
                 const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
                 console.log("query", query)
                 pool.query(query, (err, result) => {
@@ -102,6 +102,9 @@ router.post('/verify_otp', (req, res) => {
                     }
                 })
             }
+            else {
+                return res.json({ result: false, message: "Mobile number not found" })
+            }
         })
     } catch (e) {
         console.log('error in otp', e);
@@ -110,6 +113,42 @@ router.post('/verify_otp', (req, res) => {
             message: "Internal error occurred"
         });
     }
+})
+
+router.post('/forget_password', (req, res) => {
+    console.log("forget_password -> ", req.body);
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    const { mobile } = req.body;
+    const query = "select * from user where mobile = ?";
+    try {
+        pool.query(query, [req.body.mobile], (err, result) => {
+            if(err) {
+                console.log("error in /forget_password ->", err);
+                return res.json({ result: false });
+            }
+            else if(result[0] && result[0].mobile) {
+                const update_mobile_security_key = `update user set mobile_security_key = ? where mobile = ?`;
+                pool.query(update_mobile_security_key, [otp, mobile], (err, result) => {
+                    if(err) {
+                        console.log("update_mobile_security_key -> error", err);
+                        return res.json({result: false, message: "Internal Server Error"})
+                    }
+                    else {
+                        SendOtp(mobile, otp, res);
+                    }
+                })
+            }
+            else {
+                return res.json({ result: false, message: "Mobile number not found" })
+            }
+        })
+    } catch(e) {
+        console.log("error in /forget_password -> ", e);
+        return res.json({ result: false });
+    }
+    pool.query(query, [req.body.mobile], (err, result) => {
+
+    })
 })
 
 // req.post('/verify_otp', (req, res) => {
