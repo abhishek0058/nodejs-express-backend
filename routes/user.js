@@ -80,7 +80,7 @@ router.post('/verify_otp', (req, res) => {
                     password
                 } = result[0];
                 // move user from pending_users to users
-                const query = `insert into ${tableName} (name, email, mobile, password) ('${name}', '${email}', '${mobile}', '${password}')`;
+                const query = `insert into ${tableName} (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}')`;
                 pool.query(query, (err2, result2) => {
                     if (err) {
                         return res.json({
