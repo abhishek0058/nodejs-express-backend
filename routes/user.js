@@ -287,7 +287,7 @@ const SendOtp = (mobile, otp, response) => {
                 });
             } else {
                 console.log("body", body);
-                console.log("SMS SEND TO -> ", mobile)
+                console.log("SMS SEND TO -> ", mobile, "otp", otp)
                 return response.json({
                     result: true
                 })
