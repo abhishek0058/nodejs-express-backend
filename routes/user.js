@@ -29,7 +29,7 @@ router.post('/new', (req, res) => {
         console.log("query", query)
         pool.query(query, (err, result) => {
             if(err) {
-                console.log("error during insterting pending user");
+                console.log("error during insterting pending user", err);
                 return res.json({ result: false });
             }
             else {
