@@ -30,14 +30,14 @@ router.post('/new', (req, res) => {
             mobile,
             password
         } = req.body;
-        
+
         const checkIfAlreadyExist = "select * from user, pending_users where user.mobile = ? or pending_users.mobile = ?";
         pool.query(checkIfAlreadyExist, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
             console.log("check If mobile Already Exist Reuslt -> ", checkIfAlreadyExistReuslt);
             if(err) {
                 console.log("error", err)
                 return res.json({ result: false, message: "Mobile Number Already Exist" })
-            } else if(checkIfAlreadyExistReuslt.legnth == 0) {
+            } else if(!checkIfAlreadyExistReuslt[0]) {
                 const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
                 console.log("query", query)
                 pool.query(query, (err, result) => {
