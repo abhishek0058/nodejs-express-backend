@@ -31,9 +31,9 @@ router.post('/new', (req, res) => {
             password
         } = req.body;
         
-        const checkIfAlreadyExist = "select * from user, pending_uesrs where mobile = ?";
+        const checkIfAlreadyExist = "select * from user, pending_users where user.mobile = ? or pending_users.mobile = ?";
 
-        pool.query(checkIfAlreadyExist, (err, checkIfAlreadyExistReuslt) => {
+        pool.query(checkIfAlreadyExist, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
             if(err) {
                 return res.json({ result: false, message: "Mobile Number Already Exist" })
             } else {
