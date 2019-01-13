@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('./pool');
 const email = require('./email');
 const tableName = 'user'
+const request = require('request');
 
 router.post('/login', (req, res) => {
     const {
@@ -21,20 +22,78 @@ router.post('/login', (req, res) => {
 })
 
 router.post('/new', (req, res) => {
-    const query = `insert into ${tableName} set ? `
-    pool.query(query, req.body, (err) => {
-        if (err) {
-            console.log(err)
-            res.json({
-                result: false
-            })
-        } else {
-            res.json({
-                result: true
-            })
-        }
-    })
+    try {
+        const otp =  Math.floor(100000 + Math.random() * 900000);
+        const { name, email, mobile, password } = req.body;
+        const query = `insert into pending_users (name, email, mobile, password, otp) ('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
+        pool.query(query, (err, result) => {
+            if(err) {
+                return res.json({ result: false });
+            }
+            else {
+                if(SendOtp(mobile, otp)) {
+                    return res.json({ result: true });
+                }
+                else {
+                    return res.json({ result: false });
+                }
+            }
+        })
+    } catch (e) {
+        console.log("/user/new", e);
+        res.json({ result: false });
+    }
 })
+
+router.post('/verify_otp', (req, res) => {
+    try {
+        console.log("verfity Otp -> ", req.body);
+        const { mobile, otp } = req.body
+        pool.query(`select * from pending_users where mobile = ? and otp = ?`, [mobile, otp], (err, result) => {
+            if(err) {
+                return res.json({ status: false, message: "Invalid Otp / Mobile Number" })
+            }
+            else if(result.length) {
+                const { name, email, mobile, password } = result[0];
+                // move user from pending_users to users
+                const query = `insert into ${tableName} (name, email, mobile, password) ('${name}', '${email}', '${mobile}', '${password}')`;
+                pool.query(query, (err2, result2) => {
+                    if(err) {
+                        return res.json({ result: false, message: "internal error occurred, please "})
+                    }
+                    else {
+                        return res.json({ result: true, message: "OTP is verfified", data: {...result[0], id: result2.insertId} })
+                    }
+                })
+            }
+        })
+    } catch(e) {
+        console.log('error in otp', e);
+        res.json({ status: failed, message: "Internal error occurred" });
+    }
+})
+
+// req.post('/verify_otp', (req, res) => {
+//     try {
+//         console.log("verfity Otp -> ", req.body);
+//         const { mobile, otp } = req.body
+//         pool.query(`select * from pending_users where mobile = ?`, [mobile], (err, result) => {
+//             const { name, email, mobile, password } = result[0];
+//             if(err) {
+//                 return res.json({ status: false, message: "mobile number not found" })
+//             }
+//             else if(result[0].otp == otp) {
+//                 // move user from pending_users to users
+//                 const query = `insert into ${tableName} (name, email, mobile, password) ('${name}', '${email}', '${mobile}', '${password}')`;
+//                 pool.query("")
+//             }
+//         })
+//     } catch(e) {
+//         console.log('error in otp', e);
+//         res.json({ status: failed, message: "Internal error occurred" });
+//     }
+
+// })
 
 router.post(`/edit`, (req, res) => {
     const {
@@ -165,6 +224,42 @@ router.get('/sendVerificationOTP/:userid', (req, res) => {
     res.send(false);
 })
 
+const SendOtp = (mobile, otp) => {
+    try {
+        var options = {
+            method: 'GET',
+            url: process.env.SMS_URL,
+            qs: {
+                loginid: process.env.SMS_LOGIN_ID,
+                password: process.env.SMS_LOGIN_PASSWORD,
+                msg: 'Your one-time password is ' + otp,
+                send_to: mobile,
+                senderId: process.env.SMS_SENDER_ID,
+                routeId: process.env.SMS_ROUTE_ID,
+                smsContentType: 'english',
+            },
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        };
 
+        console.log("options", options)
+        request(options, function (error, response, body) {
+            if (error) {
+                console.log("error", error);
+                return false;
+            }
+            console.log("body", body);
+            console.log("SMS SEND TO -> ", mobile)
+            return true
+        });
+
+    } catch (e) {
+        console.log("error", e);
+        return false
+    }
+}
+
+// SendOtp('7566513554', "123");
 
 module.exports = router;
