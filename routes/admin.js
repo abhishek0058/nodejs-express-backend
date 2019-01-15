@@ -37,6 +37,11 @@ router.get('/home', (req, res) => {
             }
         })
     }
+    else {
+        res.render('Admin/AdminLogin', {
+            msg: false
+        });
+    }
 })
 router.get('/login', (req, res) => {
     showLogin(req, res)
