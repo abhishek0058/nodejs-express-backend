@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "ccavenue": "^1.0.2",
     "cookie-parser": "~1.4.3",
     "cookie-session": "^2.0.0-beta.3",
     "cors": "^2.8.4",
