@@ -6,7 +6,8 @@ exports.postRes = function (request, response) {
 		var ccavEncResponse = '',
 			ccavResponse = '',
 			workingKey = process.env.WORKING_KEY, //Put in the 32-Bit key shared by CCAvenues.
-			ccavPOST = '';
+			ccavPOST = '',
+			body = '';
 
 		for(let i in request.body) {
 			body = body + i + "=" + request.body[i] + "&";
