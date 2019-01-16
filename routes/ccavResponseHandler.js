@@ -8,9 +8,11 @@ exports.postRes = function (request, response) {
 			workingKey = process.env.WORKING_KEY, //Put in the 32-Bit key shared by CCAvenues.
 			ccavPOST = '';
 
-		console.log("response", request.body);
+		for(let i in request.body) {
+			body = body + i + "=" + request.body[i] + "&";
+		}
 
-		ccavEncResponse = request.body;
+		ccavEncResponse = body;
 		ccavPOST = qs.parse(ccavEncResponse);
 		var encryption = ccavPOST.encResp;
 		ccavResponse = ccav.decrypt(encryption, workingKey);
