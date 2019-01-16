@@ -43,20 +43,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.get('/sample_form', function (req, res){
-//   res.render('sample_form');
-// });
+app.get('/sample_form', function (req, res){
+  res.render('sample_form');
+});
 
-// app.post('/ccavRequestHandler', function (request, response){
-//   ccavReqHandler.postReq(request, response);
-// });
+app.post('/ccavRequestHandler', function (request, response){
+  ccavReqHandler.postReq(request, response);
+});
 
 
-// app.post('/ccavResponseHandler', function (request, response){
-//     ccavResHandler.postRes(request, response);
-// });
+app.post('/ccavResponseHandler', function (request, response){
+    ccavResHandler.postRes(request, response);
+});
 
-app.use('/cc', ccavenue);
+// app.use('/cc', ccavenue);
 
 app.use('/', indexRouter);
 app.use('/admin',admin);
