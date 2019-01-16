@@ -11,10 +11,16 @@ exports.postReq = function (request, response) {
 		console.log("workingKey", workingKey);
 		console.log("accessCode", accessCode);
 
+		for(let i in request.body) {
+			body = body + i + "=" + request.body[i] + "&"
+		}
+
 		const bodyInBuffer = Buffer.from(JSON.stringify(request.body));
 
 		body += bodyInBuffer;
+
 		encRequest = ccav.encrypt(body, workingKey);   
+		
 		formbody = '<form id="nonseamless" method="post" name="redirect" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction"/> <input type="hidden" id="encRequest" name="encRequest" value="' + encRequest + '"><input type="hidden" name="access_code" id="access_code" value="' + accessCode + '"><script language="javascript">document.redirect.submit();</script></form>';
 		response.writeHeader(200, {
 			"Content-Type": "text/html"
