@@ -62,6 +62,10 @@ app.get('/close', (req, res) => {
   res.send("closed");
 })
 
+app.get('/cancel', (req, res) => {
+  res.send("cancel");
+})
+
 app.get('/failed', (req, res) => {
   res.send("failed");
 })
