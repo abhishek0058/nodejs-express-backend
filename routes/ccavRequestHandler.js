@@ -3,13 +3,13 @@ var ccav = require('./ccavutil.js')
 exports.postReq = function (request, response) {
 	try {
 		const data = request.session.data;
-		if(!(data && data.name && data.amount && data.packageid && data.userid)) {
+		if(!(data && data.name && data.amount && data.packageid && data.userid && data.cycles)) {
 			return response.render('errors/not_found') 
 		}
         const orderId = Math.floor(100000 + Math.random() * 900000);
-		const { userid, packageid, amount } = data;
+		const { userid, packageid, amount, cycles } = data;
 
-		var uniqueParama = `merchant_param1=${userid}&merchant_param2=${packageid}&order_id=${orderId}&amount=${amount}&`
+		var uniqueParama = `merchant_param1=${userid}&merchant_param2=${packageid}&merchant_param3=${cycles}&order_id=${orderId}&amount=${amount}&`
 
 		var body = process.env.CCAVENUE_STRING + uniqueParama,
 			workingKey = process.env.WORKING_KEY,

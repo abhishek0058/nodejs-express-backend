@@ -58,6 +58,14 @@ app.post('/ccavResponseHandler', function (request, response){
 
 // app.use('/cc', ccavenue);
 
+app.get('/close', (req, res) => {
+  res.send("closed");
+})
+
+app.get('/failed', (req, res) => {
+  res.send("failed");
+})
+
 app.use('/', indexRouter);
 app.use('/admin',admin);
 app.use('/user', user);
