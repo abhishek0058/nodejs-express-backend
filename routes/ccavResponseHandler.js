@@ -43,9 +43,13 @@ exports.postRes = function (request, response) {
 
     const queryHistory = `insert into purchase_history(userid, packageid, amount, date) 
 						values(${userid}, ${packageid}, ${amount}, CURDATE());`;
-						
+		
+		console.log("queryAccount", queryAccount);
+		console.log("queryHistory", queryHistory);
+		
 	pool.query(queryAccount + queryHistory, (err, result) => {
 		if(err) {
+			console.log("error during queries", err);
 			response.render('errors/internal_error');
 		}
 		else {
