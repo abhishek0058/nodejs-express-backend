@@ -8,36 +8,44 @@ router.get('/', (req, res) => {
     res.render('package/package')
 })
 
-router.post('/buy', (req, res) => {
+// router.get('/buy', (req, res) => {
+//     const { userid, packageid, amount } = req.query;
+//     const workingKey = process.env.WORKING_KEY;
+// 	const accessCode = process.env.ACCESS_CODE;
+//     const orderId = Math.floor(100000 + Math.random() * 900000);
+
+// })
+
+// router.post('/buy', (req, res) => {
     
-    const { userid, packageid, cycles, amount } = req.body;
+//     const { userid, packageid, cycles, amount } = req.body;
 
-    const queryAccount = `insert into account (userid, packageid, cycles_left) VALUES (${userid}, ${packageid}, ${cycles})
-                        ON DUPLICATE KEY UPDATE packageid = ${packageid}, cycles_left = cycles_left + ${cycles};`;
+//     const queryAccount = `insert into account (userid, packageid, cycles_left) VALUES (${userid}, ${packageid}, ${cycles})
+//                         ON DUPLICATE KEY UPDATE packageid = ${packageid}, cycles_left = cycles_left + ${cycles};`;
 
-    const queryHistory = `insert into purchase_history(userid, packageid, amount, date) 
-                        values(${userid}, ${packageid}, ${amount}, CURDATE());`;
+//     const queryHistory = `insert into purchase_history(userid, packageid, amount, date) 
+//                         values(${userid}, ${packageid}, ${amount}, CURDATE());`;
 
-    const packageDetails = `select name, cycles, amount from package where id = ${packageid};`;
+//     const packageDetails = `select name, cycles, amount from package where id = ${packageid};`;
     
-    const userDeatils = `select email from user where id = ${userid};`;
+//     const userDeatils = `select email from user where id = ${userid};`;
 
-    pool.query(queryAccount + queryHistory + packageDetails + userDeatils, req.body, (err, result) => {
-        if(err) {
-            console.log(err)
-            res.json({ result: false })
-        } else {
-            var data = {
-                name: result[2][0].name,
-                cycles: result[2][0].cycles,
-                transactionid: result[1].insertId,
-                amount: result[2][0].amount
-            }
+//     pool.query(queryAccount + queryHistory + packageDetails + userDeatils, req.body, (err, result) => {
+//         if(err) {
+//             console.log(err)
+//             res.json({ result: false })
+//         } else {
+//             var data = {
+//                 name: result[2][0].name,
+//                 cycles: result[2][0].cycles,
+//                 transactionid: result[1].insertId,
+//                 amount: result[2][0].amount
+//             }
 
-            email({email: result[3][0].email}, "package-receipt", res, 0, data)
-        }
-    })
-})
+//             email({email: result[3][0].email}, "package-receipt", res, 0, data)
+//         }
+//     })
+// })
 
 router.post(`/edit`, (req, res) => {
     const { id, name } = req.body

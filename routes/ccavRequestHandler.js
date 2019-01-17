@@ -2,7 +2,7 @@ var ccav = require('./ccavutil.js')
 
 exports.postReq = function (request, response) {
 	try {
-		var body = '',
+		var body = process.env.CCAVENUE_STRING + "",
 			workingKey = process.env.WORKING_KEY, //Put in the 32-Bit key shared by CCAvenues.
 			accessCode = process.env.ACCESS_CODE, //Put in the Access Code shared by CCAvenues.
 			encRequest = '',
