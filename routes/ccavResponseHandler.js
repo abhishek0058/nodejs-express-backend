@@ -19,7 +19,13 @@ exports.postRes = function (request, response) {
 		var encryption = ccavPOST.encResp;
 		ccavResponse = ccav.decrypt(encryption, workingKey);
 
-		const allParameters = ccavResponse.split('&');
+		const rawParameters = ccavResponse.split('&');
+		
+		var allParameters = []
+		for(let i=0; i<rawParameters.length; i++) {
+			allParameters.push(rawParameters[i].split("="))	
+		}
+
 		let packageid = null, userid = null, amount = null, cycles = request.session.data.cycles;
 
 		for(let i=0; i<allParameters.length; i++) {
