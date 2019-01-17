@@ -8,13 +8,40 @@ router.get('/', (req, res) => {
     res.render('package/package')
 })
 
-// router.get('/buy', (req, res) => {
-//     const { userid, packageid, amount } = req.query;
-//     const workingKey = process.env.WORKING_KEY;
-// 	const accessCode = process.env.ACCESS_CODE;
-//     const orderId = Math.floor(100000 + Math.random() * 900000);
+router.get('/buy', (req, res) => {
+    try {
+        const { userid, packageid, amount } = req.query;
 
-// })
+        const query = "select * from user where id = ?; select * from package where id = ?";
+        
+        pool.query(query, [userid, packageid], (err, result) => {
+            if(err) {
+                console.log("err -> ", err);
+                res.render("errors/internal_error");
+            }
+            else if(result && result[0] && result[1] && result[0].length && result[1].length) {
+                const payload = { 
+                    name: result[0][0].name,
+                    cycles: result[1][0].cycles,
+                    amount: result[1][0].amount,
+                    logo: result[1][0].logo,
+                    userid: result[0][0].id,
+                    packageid: result[1][0].id
+                 }
+                req.session.data = payload
+                res.render("payment/confirm", payload);
+            }
+            else {
+                console.log("user not found");
+                res.render("errors/not_found");
+            }
+        })
+    } catch (e) {
+        console.log("error during  showing information -> ", e);
+    }
+
+    // things to send AMOUNT, CUSTOMERID, PACKAGEID, ORDERID, 
+})
 
 // router.post('/buy', (req, res) => {
     

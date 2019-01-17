@@ -2,9 +2,18 @@ var ccav = require('./ccavutil.js')
 
 exports.postReq = function (request, response) {
 	try {
-		var body = process.env.CCAVENUE_STRING + "",
-			workingKey = process.env.WORKING_KEY, //Put in the 32-Bit key shared by CCAvenues.
-			accessCode = process.env.ACCESS_CODE, //Put in the Access Code shared by CCAvenues.
+		const data = request.session.data;
+		if(!(data && data.name && data.amount && data.packageid && data.userid)) {
+			return response.render('errors/not_found') 
+		}
+        const orderId = Math.floor(100000 + Math.random() * 900000);
+		const { userid, packageid, amount } = data;
+
+		var uniqueParama = `merchant_param1=${userid}&merchant_param2=${packageid}&order_id=${orderId}&amount=${amount}&`
+
+		var body = process.env.CCAVENUE_STRING + uniqueParama,
+			workingKey = process.env.WORKING_KEY,
+			accessCode = process.env.ACCESS_CODE,
 			encRequest = '',
 			formbody = '';
 
@@ -14,12 +23,8 @@ exports.postReq = function (request, response) {
 		for(let i in request.body) {
 			body = body + i + "=" + request.body[i] + "&"
 		}
-
+		
 		console.log("body", body)
-
-		// const bodyInBuffer = Buffer.from(body);
-
-		// body = bodyInBuffer;
 
 		encRequest = ccav.encrypt(body, workingKey);   
 		

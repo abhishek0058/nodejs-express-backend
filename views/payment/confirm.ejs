@@ -1,0 +1,13 @@
+<html>
+    hello, <%= name %>
+    <br />
+    do you like to proceed with your request for purchasing the package of rs <%= amount %> for <%= cycles %> cycle
+
+    <img src="images/<%= logo %>" />
+    
+    <form method="POST" name="customerData" action="/ccavRequestHandler">
+        <button type="submit">Yes, proceed</button>
+    </form>
+
+
+</html>
