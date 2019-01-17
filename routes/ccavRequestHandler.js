@@ -17,9 +17,9 @@ exports.postReq = function (request, response) {
 
 		console.log("body", body)
 
-		const bodyInBuffer = Buffer.from(body);
+		// const bodyInBuffer = Buffer.from(body);
 
-		body = bodyInBuffer;
+		// body = bodyInBuffer;
 
 		encRequest = ccav.encrypt(body, workingKey);   
 		
