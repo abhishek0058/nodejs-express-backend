@@ -15,9 +15,11 @@ exports.postReq = function (request, response) {
 			body = body + i + "=" + request.body[i] + "&"
 		}
 
-		const bodyInBuffer = Buffer.from(JSON.stringify(request.body));
+		console.log("body", body)
 
-		body += bodyInBuffer;
+		const bodyInBuffer = Buffer.from(body);
+
+		body = bodyInBuffer;
 
 		encRequest = ccav.encrypt(body, workingKey);   
 		
