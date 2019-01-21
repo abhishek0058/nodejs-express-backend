@@ -1,14 +1,29 @@
 <html>
-    hello, <%= name %>
-    <br />
-    do you like to proceed with your request for purchasing the package of rs <%= amount %> for <%= cycles %> cycle
-
-    <img src="images/<%= logo %>" />
-    
-    <form method="POST" name="customerData" action="/ccavRequestHandler">
-        <button type="submit">Yes, proceed</button>
-    </form>
-
-    <a href="/cancel">cancel</a>
-
+    <head>
+        <link rel="stylesheet" type="text/css" href="asset/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>Hello, <%= name %></h2>
+                    <h4>
+                        Do you like to proceed with your request for purchasing the package of &#8377; <%= amount %> for <%= cycles %> cycle
+                    </h4>
+                    
+                    <img src="images/<%= logo %>" class="img img-bordered" />
+                </div>
+                <div class="col-xs-6">
+                    <form method="POST" name="customerData" action="/ccavRequestHandler">
+                        <button type="submit" class="btn btn-primary">Yes, proceed</button>
+                    </form>
+                </div>
+                <div class="col-xs-6">
+                    <a href="/cancel">
+                        <button class="btn btn-danger">Cancel</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
