@@ -18,7 +18,6 @@ var hostel = require('./routes/hostel')
 var machine = require('./routes/machine')
 var package = require('./routes/package')
 var account = require('./routes/account')
-// var test = require('./routes/test')(io)
 var purchaseHistory = require('./routes/purchaseHistory');
 var machineSocket = require('./routes/machineSocket')(io);
 var queries=require('./routes/queries');
@@ -43,10 +42,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/sample_form', function (req, res){
-  res.render('sample_form');
-});
-
 app.post('/ccavRequestHandler', function (request, response){
   ccavReqHandler.postReq(request, response);
 });
@@ -55,8 +50,6 @@ app.post('/ccavRequestHandler', function (request, response){
 app.post('/ccavResponseHandler', function (request, response){
     ccavResHandler.postRes(request, response);
 });
-
-// app.use('/cc', ccavenue);
 
 app.get('/close', (req, res) => {
   res.send("closed");
@@ -78,11 +71,11 @@ app.use('/hostel', hostel);
 app.use('/machine', machine);
 app.use('/package', package);
 app.use('/account', account);
-// app.use('/test', test);
 app.use('/purchaseHistory', purchaseHistory);
 app.use('/machineSocket', machineSocket);
 app.use('/queries', queries);
 app.use('/machineReports',machineReports);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
