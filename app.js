@@ -25,6 +25,7 @@ var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
 var ccavReqHandler = require('./routes/ccavRequestHandler.js');
 var ccavResHandler = require('./routes/ccavResponseHandler.js');
+var ccavenue = require('./routes/ccavenue');
 
 app.use(cookieSession({
   name: 'laudrybay',
@@ -54,6 +55,20 @@ app.post('/ccavRequestHandler', function (request, response){
 app.post('/ccavResponseHandler', function (request, response){
     ccavResHandler.postRes(request, response);
 });
+
+// app.use('/cc', ccavenue);
+
+app.get('/close', (req, res) => {
+  res.send("closed");
+})
+
+app.get('/cancel', (req, res) => {
+  res.send("cancel");
+})
+
+app.get('/failed', (req, res) => {
+  res.send("failed");
+})
 
 app.use('/', indexRouter);
 app.use('/admin',admin);
