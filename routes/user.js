@@ -83,18 +83,26 @@ router.post('/verify_otp', (req, res) => {
                 console.log("from pending user -> ", result);
                 // move user from pending_users to users
                 const query = `delete from pending_users where mobile = '${mobile}';insert into user (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}');`;
-                const addFreeCycle = `insert into account (userid, packageid, cycles_left) VALUES (${userid}, 16, 1);`;
+                const addFreeCycle = `insert into account (userid, packageid, cycles_left) VALUES (?, 16, 1);`;
                 console.log("query", query);
                 console.log("addFreeCycle", addFreeCycle);
-                pool.query(query + addFreeCycle, (err2, result2) => {
+                pool.query(query, (err2, result2) => {
                     if (err) {
                         return res.json({
                             result: false,
                             message: "internal error occurred, please "
                         })
                     } else {
-                        console.log("free cycle added result -> ", result2[2]);
-                        console.log("user confirmed", { ...result[0], id: result2[1].insertId })
+                        pool.query(addFreeCycle, [result2[1].insertId], (addError, addreuslt) => {
+                            if(addError) {
+                                console.log("add Error", addError);
+                            } else {
+                                console.log("free cycle added result -> ", addreuslt);
+                            }
+                        })
+                        
+                        console.log("user confirmed", { ...result[0], id: result2[1] .insertId })
+
                         return res.json({
                             result: true,
                             message: "OTP is verfified",
