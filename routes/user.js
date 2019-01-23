@@ -435,7 +435,7 @@ router.get('/PendingUsers', (req, res) => {
             console.log("err", err);
             res.send("Error");
         } else {
-            res.render("user/pendingUsers", {
+            res.render("user/PendingUsers", {
                 data: result
             })
         }
