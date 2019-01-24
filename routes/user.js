@@ -38,7 +38,7 @@ router.post('/new', (req, res) => {
                 console.log("error", err)
                 return res.json({
                     result: false,
-                    message: "Mobile Number Already Exist"
+                    message: "We are sorry, but currently we are unable to process your request"
                 })
             } else if (checkIfAlreadyExistReuslt.length == 0) {
                 const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
@@ -53,13 +53,46 @@ router.post('/new', (req, res) => {
                     SendOtp(mobile, otp, res);
                 })
             }
+            else if(checkIfAlreadyExistReuslt.length > 0) {
+                console.log("user exist");
+                const { mobile, otp } = checkIfAlreadyExistReuslt[0];
+                SendOtp(mobile, otp, res);
+            }
         })
 
     } catch (e) {
         console.log("/user/new", e);
         res.json({
-            result: false
+            result: false,
+            message: "internal server error"
         });
+    }
+});
+
+router.post('/resendOTP', (req, res) => {
+    try {
+        const { mobile } = req.body;
+        const fetchOTPFromDatabase = "select otp from pending_users where mobile = ?";
+        pool.query(fetchOTPFromDatabase, [mobile], (err, result) => {
+            if(err) {
+                console.log("error in fetching otp from database");
+                return res.json({
+                    result: false,
+                    message: "Mobile Number Already Exist"
+                })
+            }
+            else if(result.length == 0) {
+                return res.json({
+                    result: false,
+                    message: "Can't find the mobile number"
+                })
+            }
+            else if(result.length > 0) {
+                SendOtp(mobile, result[0].otp, res);
+            }
+        });
+    } catch(e) {
+        console.log("error in re-sending OTP", e);
     }
 })
 
