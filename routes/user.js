@@ -517,6 +517,48 @@ const SendOtp = (mobile, otp, response) => {
     }
 }
 
+router.get('/delete/:id', (req, res) => {
+    if (req.session.id) {
+        const { id } = req.params;
+        const deleteUser = `delete from user where id = ${id}`;
+        console.log('deleting user -> ', id, deleteUser)
+        pool.query(deleteUser, (err, result) => {
+            if(err) {
+                console.log('error', err);
+                res.send('Something went wrong');
+            }
+            else {
+                res.render('user/DisplayAll');
+            }
+        })
+    }
+    else {
+        res.redirect('/admin');
+    }
+});
+
+
+
+router.get('/delete-pending-user/:id', (req, res) => {
+    if (req.session.id) {
+        const { id } = req.params;
+        const deleteUser = `delete from pending_users where id = ${id}`;
+        console.log('deleting user -> ', id, deleteUser)
+        pool.query(deleteUser, (err, result) => {
+            if(err) {
+                console.log('error', err);
+                res.send('Something went wrong');
+            }
+            else {
+                res.redirect('/user/pendingusers');
+            }
+        })
+    }
+    else {
+        res.redirect('/admin');
+    }
+});
+
 // SendOtp('7566513554', "123");
 
 module.exports = router;

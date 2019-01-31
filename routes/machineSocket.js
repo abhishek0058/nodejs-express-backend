@@ -19,7 +19,7 @@ module.exports = function (io) {
 
   const paymentFromAccount = `update account set cycles_left = cycles_left - 1 where userid = ?;`;
   const activator_user = `update machine set activator_user = ? where channel = ?;`;
-  const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (?, ?, '${new Date().toString()}');`;
+  const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (?, ?, NOW());`;
 
   const removeActivatorUser = `update machine set activator_user = '' where channel = ?;`;
 

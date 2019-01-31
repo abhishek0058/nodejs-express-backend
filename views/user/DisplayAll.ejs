@@ -6,14 +6,12 @@
   <meta name="author" content="">
   <meta name="keyword" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-<link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css">
+  <title>Home</title>
+  <link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css">
       <!-- plugins -->
-      <script src="/admin/asset/js/jquery.min.js"></script>
+    <script src="/admin/asset/js/jquery.min.js"></script>
     <script src="/admin/asset/js/jquery.ui.min.js"></script>
     <script src="/admin/asset/js/bootstrap.min.js"></script>
-
-
 </head>
 <script>
 function makeCard(data) {
@@ -29,6 +27,7 @@ function makeCard(data) {
     htm+='<th><b>Account Number</b></th>'
     htm+='<th><b>Balance</b></th>'
     htm+='<th><b>Change Balance</b></th>'
+    htm+='<th><b>Delete</b></th>'
     htm+='</thead>'
     // console.log(data)
 	$.each(data.result, function(i, item) {
@@ -42,6 +41,7 @@ function makeCard(data) {
             <td>${$acc}</td>
             <td>${$bal}</td>
             <td><button data='${JSON.stringify(item)}' class='change btn btn-info'>Change Balance</button></td>
+            <td><button id=${item.userid} class='delete btn btn-danger'>Delete</button></td>
             </tr> `
             
 	})
@@ -68,7 +68,13 @@ var url = '/user/DisplayAllJSON'
                          makeCard(data)
                      })
                 })
-            })  
+            })
+            $('#result').on(`click`,'.delete',e=>{
+                var id = e.target.attributes[0].value;
+                if(confirm('Are you sure to delete this user ?')) {
+                    window.location.href = `/user/delete/${id}`;
+                }
+            })
         })
     add=data=>{
         $acc = (data.id == 0) ? '' : data.id;
@@ -80,7 +86,7 @@ var url = '/user/DisplayAllJSON'
             <td>${data.email}</td>
             <td>${$acc}</td> 
             <td><input id=balance type=number value='${$bal}' class='form-control'></td>
-            <td><button id='${data.id}'   class='edit btn btn-success'>Change</button></td>
+            <td><button id='${data.id}' class='edit btn btn-success'>Change</button></td>
             </tr> `
     }
     

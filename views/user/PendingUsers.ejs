@@ -13,21 +13,27 @@
                                 <th>Mobile</th>
                                 <th>OTP</th>
                                 <th>Verify</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
-                                <% for(var i=0; i<data.length; i++) { %>
-                                        <tr>
-                                            <td><%=  data[i].name %></td>
-                                            <td><%=  data[i].mobile %></td>
-                                            <td><%=  data[i].otp %></td>
-                                            <td>
-                                                <a href="/user/user_verify_without_otp/<%= data[i].id %>">
-                                                    <button class="btn btn-primary">Verify</button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <% } %>
+                            <% for(var i=0; i<data.length; i++) { %>
+                                <tr>
+                                    <td><%=  data[i].name %></td>
+                                    <td><%=  data[i].mobile %></td>
+                                    <td><%=  data[i].otp %></td>
+                                    <td>
+                                        <a href="/user/user_verify_without_otp/<%= data[i].id %>">
+                                            <button class="btn btn-primary">Verify</button>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="/user/delete-pending-user/<%= data[i].id %>">
+                                            <button class="btn btn-danger">Delete</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

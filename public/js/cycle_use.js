@@ -1,9 +1,7 @@
 $(document).ready(()=>{
-    $.getJSON(`/machineReports/cycle_use_json`, async cycle => await showAll(cycle['result']))
-     $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
-       
-        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id)
-        .text(item.user_name)))
+    $.getJSON(`/machineReports/cycle_use_json`, cycle => showAll(cycle['result']))
+    $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
+        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id).text(item.user_name)))
     })
 showAll=cycle=>{
     var thead=''
