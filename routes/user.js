@@ -31,8 +31,9 @@ router.post('/new', (req, res) => {
             password
         } = req.body;
 
-        const checkIfAlreadyExist = "select * from user, pending_users where user.mobile = ? or pending_users.mobile = ?";
-        pool.query(checkIfAlreadyExist, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
+        const checkIfAlreadyExistInUser = "select * from user where user.mobile = ?;";
+        const checkIfAlreadyExistInPendingUser = "select * from pending_users where pending_users.mobile = ?;";
+        pool.query(checkIfAlreadyExistInUser + checkIfAlreadyExistInPendingUser, [mobile, mobile], (err, checkIfAlreadyExistReuslt) => {
             console.log("check If mobile Already Exist Reuslt -> ", checkIfAlreadyExistReuslt);
             if (err) {
                 console.log("error", err)
@@ -40,7 +41,15 @@ router.post('/new', (req, res) => {
                     result: false,
                     message: "We are sorry, but currently we are unable to process your request"
                 })
-            } else if (checkIfAlreadyExistReuslt.length == 0) {
+            } 
+            else if(checkIfAlreadyExistReuslt[0].length > 0) {
+                console.log("user already exist", checkIfAlreadyExistReuslt[0]);
+                return res.json({
+                    result: false,
+                    message: "This mobile number is already exist"
+                })
+            }
+            else if (checkIfAlreadyExistReuslt[1].length == 0) {
                 const query = `insert into pending_users (name, email, mobile, password, otp) values('${name}', '${email}', '${mobile}', '${password}', '${otp}')`;
                 console.log("query", query)
                 pool.query(query, (err, result) => {
@@ -53,9 +62,9 @@ router.post('/new', (req, res) => {
                     SendOtp(mobile, otp, res);
                 })
             }
-            else if(checkIfAlreadyExistReuslt.length > 0) {
+            else if(checkIfAlreadyExistReuslt[1].length > 0) {
                 console.log("user exist");
-                const { mobile, otp } = checkIfAlreadyExistReuslt[0];
+                const { mobile, otp } = checkIfAlreadyExistReuslt[1][0];
                 SendOtp(mobile, otp, res);
             }
         })
