@@ -68,8 +68,6 @@ router.get('/UserPurchesed', (req, res) => {
                 result: false
             })
         } else {
-            console.log(result);
-
             res.json({
                 result
             })
