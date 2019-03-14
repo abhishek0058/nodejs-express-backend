@@ -62,7 +62,7 @@ router.get('/delete/:id', (req, res) => {
 
 router.get('/all', (req, res) => {
     const { id } = req.params;
-    pool.query(`select * from ${tableName}`, (err, result) => {
+    pool.query(`select * from ${tableName} where status = "active"`, (err, result) => {
         if(err) {
             console.log(err)
             res.json({ result: false })

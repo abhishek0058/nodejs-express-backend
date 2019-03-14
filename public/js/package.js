@@ -5,8 +5,8 @@ showPackage=data=>{
 			<div class="row">
 				<div class="col-sm-12 col-md-12">
 					<div class="page-title">
-						<h2 class="lead">Recharge Plan</h2>
-						<p class="sublead" style="font-size:29px;"><strong>Cost Per Wash Cycle as low as Rs.40/-</strong></p>
+						<h2 class="lead">Recharge Plans</h2>
+						<p class="sublead" style="font-size:24px;"><strong>Cost Per Wash Cycle as low as Rs.40/-</strong></p>
 						<hr>
 					</div>
 				</div>
@@ -24,7 +24,7 @@ showPackage=data=>{
 						<div class="panel-body">
 							<table class="table">
 								<tbody>
-									<tr><td>${item.cycles} cycles</td></tr>
+									<tr><td>${item.cycles} wash cycles</td></tr>
 								</tbody>
 							</table>
 						</div>

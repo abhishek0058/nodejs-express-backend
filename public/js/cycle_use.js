@@ -1,9 +1,7 @@
 $(document).ready(()=>{
-    $.getJSON(`/machineReports/cycle_use_json`, async cycle => await showAll(cycle['result']))
-     $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
-       
-        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id)
-        .text(item.user_name)))
+    $.getJSON(`/machineReports/cycle_use_json`, cycle => showAll(cycle['result']))
+    $.getJSON(`/purchaseHistory/UserPurchesed`, data => {
+        $.each(data.result, (i, item) => $('#user').append($('<option>').val(item.user_id).text(item.user_name)))
     })
 showAll=cycle=>{
     var thead=''
@@ -16,18 +14,12 @@ showAll=cycle=>{
             </thead>`
 
 var tbody=`<tbody>`
-$.each(cycle,(i,item)=>{
-  
-    var date = new Date(item.date)
-//    console.log(date);
-    // date = `${date.getDay()-1}-${date.getMonth()+1}-${date.getFullYear()}  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
- 
-    
+$.each(cycle, (i,item) => {
     tbody+=`<tr>
         <td>${i+1}</td>
         <td>${item.id}</td>
         <td>${item.user}</td>
-        <td>${date}</td>
+        <td>${item.date}</td>
         </tr>`
 })
 var table=`${thead+tbody}</tbody></table>`
