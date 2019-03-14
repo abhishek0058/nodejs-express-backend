@@ -14,18 +14,12 @@ showAll=cycle=>{
             </thead>`
 
 var tbody=`<tbody>`
-$.each(cycle,(i,item)=>{
-  
-    var date = new Date(item.date)
-//    console.log(date);
-    // date = `${date.getDay()-1}-${date.getMonth()+1}-${date.getFullYear()}  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
- 
-    
+$.each(cycle, (i,item) => {
     tbody+=`<tr>
         <td>${i+1}</td>
         <td>${item.id}</td>
         <td>${item.user}</td>
-        <td>${date}</td>
+        <td>${item.date}</td>
         </tr>`
 })
 var table=`${thead+tbody}</tbody></table>`
