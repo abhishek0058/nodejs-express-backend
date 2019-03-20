@@ -19,12 +19,13 @@ var machine = require('./routes/machine')
 var package = require('./routes/package')
 var account = require('./routes/account')
 var purchaseHistory = require('./routes/purchaseHistory');
-var machineSocket = require('./routes/machineSocket')(io);
+// var machineSocket = require('./routes/machineSocket')(io);
 var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
 var ccavReqHandler = require('./routes/ccavRequestHandler.js');
 var ccavResHandler = require('./routes/ccavResponseHandler.js');
 var ccavenue = require('./routes/ccavenue');
+var newMachineSocket = require("./routes/newMachineSockets")(io);
 
 app.use(cookieSession({
   name: 'laudrybay',
@@ -72,9 +73,10 @@ app.use('/machine', machine);
 app.use('/package', package);
 app.use('/account', account);
 app.use('/purchaseHistory', purchaseHistory);
-app.use('/machineSocket', machineSocket);
+// app.use('/machineSocket', machineSocket);
 app.use('/queries', queries);
 app.use('/machineReports',machineReports);
+app.use('/newMachineSocket', newMachineSocket);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
