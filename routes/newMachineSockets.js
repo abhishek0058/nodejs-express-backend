@@ -6,10 +6,17 @@ module.exports = (io) => {
     const pool = require("./pool");
     // Get all the machines
     let machines = null;
-    (() => utilities.getAllMachines(pool).then((result) => machines = result))();
+    (() => 
+        utilities
+            .getAllMachines(pool)
+            .then((result) => machines = result)
+            .catch(err => console.log("error", err))
+    )();
     // activator users
     let activatorUsers = [];
     
+    // TODO: make a function which takes channel as parameter and sets the state of the machine in the machines array
+
     // Implement Sockets
     io.on("connection", socket => {
         
@@ -22,8 +29,15 @@ module.exports = (io) => {
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel) {
-                        machines[hosteild][channel].socketId = socket.id;
-                        machines[hosteild][channel]._status = "active";
+                        const { timer, user } = machines[hosteild][channel];
+                        if(!timer) {
+                            machines[hosteild][channel].socketId = socket.id;
+                            machines[hosteild][channel]._status = "active";
+                        }
+                        else if(timer) {
+                            io.emit("reset_previouse_state", { channel, timer, user });
+                            machines[hosteild][channel]._status = "busy";
+                        }
                     }
                 }
             }
@@ -141,13 +155,14 @@ module.exports = (io) => {
                                     ...machines[hosteild][channel],
                                     _status: "inProgress",
                                     timeoutId
-                                }
+                                };
+                                let cycle_time = machines[hosteild][channel].cycle_time;;
+                                io.emit("turn_machine_on", { channel, user, cycle_time });
                             }
                             break;
                         }
                     }
                 }
-                io.emit("turn_machine_on", { channel, user });
             });
         });
 
@@ -196,7 +211,8 @@ const utilities = {
             pool.query(getAllMachines, (err, machines) => {
                 if (err) {
                     console.log("utilities -> getAllMachines", err);
-                    resolve(null);
+                    reject(err);
+                    return;
                 }
                 const result = {};
                 for (let i = 0; i < machines.length; i++) {
