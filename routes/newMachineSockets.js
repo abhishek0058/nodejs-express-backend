@@ -235,18 +235,16 @@ const utilities = {
                     const { hostelid, channel } = machines[i];
                     // for every machine check if the key of hostelid exist, if not then add one
                     if (!result[hostelid]) {
-                        result[hostelid] = { [channel]: machines[i] };
+                        result[hostelid] = {};
                     }
-                    // if it exist then simply add into it
-                    else {
-                        result[hostelid][channel] = { 
-                            ...machines[i], 
-                            _status: 'inactive', 
-                            user: null,
-                            socketId: null,
-                            timer: null
-                        };
-                    }
+                    // then simply add into it
+                    result[hostelid][channel] = { 
+                        ...machines[i],
+                        _status: 'inactive', 
+                        user: null,
+                        socketId: null,
+                        timer: null
+                    };
                 }
                 resolve(result);
             });
