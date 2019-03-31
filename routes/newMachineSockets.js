@@ -26,6 +26,7 @@ module.exports = (io) => {
             console.log("socket Id", socket.id);
             const { channel } = payload;
             // Searching for machine in the machines array
+            let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel) {
@@ -38,10 +39,11 @@ module.exports = (io) => {
                             io.emit("reset_previouse_state", { channel, timer, user });
                             machines[hosteild][channel]._status = "busy";
                         }
+                        selectHostelId = hosteild;
                     }
                 }
             }
-            io.emit("refresh", { machines });
+            io.emit("refresh", { machines, selectHostelId });
         });
 
         // event the machine to verify that it has started by the user
@@ -49,6 +51,7 @@ module.exports = (io) => {
             console.log("payload", payload);
             // make it running and register the user for it
             const { channel, user, timer } = payload;
+            let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel && machines[hosteild][_channel]._status == "inProgress" ) {
@@ -63,13 +66,14 @@ module.exports = (io) => {
                             timer,
                             timeoutId: null
                         };
+                        selectHostelId = hosteild;
                         break;
                     }
                 }
             }
             // remove user from the activators list
             activatorUsers = activatorUsers.filter(_user => _user != user);
-            io.emit("refresh", { machines });
+            io.emit("refresh", { machines, selectHostelId });
         });
 
          // event the machine to verify that it has stopped by the user
@@ -77,6 +81,7 @@ module.exports = (io) => {
             console.log("payload", payload);
             // make it running and register the user for it
             const { channel, user } = payload;
+            let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel && machines[hosteild][_channel]._status == "busy" ) {
@@ -87,26 +92,29 @@ module.exports = (io) => {
                             user: null, 
                             timer: null
                         };
+                        selectHostelId = hosteild;
                         break;
                     }
                 }
             }
-            io.emit("refresh", { machines });
+            io.emit("refresh", { machines, selectHostelId });
         });
 
         // event for machine to keep the timer in sync
         socket.on("tick", (payload) => {
             console.log("payload", payload);
             const { channel, timer } = payload;
+            let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel) {
                         machines[hosteild][channel].timer = timer;
+                        selectHostelId = hosteild;
                         break;
                     }
                 }
             }
-            io.emit("refresh", { machines });
+            io.emit("refresh", { machines, selectHostelId });
         });
 
         // event for users to turn-on the machine
@@ -121,11 +129,12 @@ module.exports = (io) => {
                     channel, 
                     user
                 });
+                return;
             }
             // This is validate the user and check cycles at the same time
             const getCyclesLeft = `select cycles_left from account where userid = ?`;
             pool.query(getCyclesLeft, user, (err, result) => {
-                if(err || (result && result[0] && result[0].cycles_left > 0)) {
+                if(err || (result && result[0] && result[0].cycles_left == 0)) {
                     console.log('err', err);
                     io.emit('error_while_turning_machine_on', {
                         status: false,
@@ -133,6 +142,7 @@ module.exports = (io) => {
                         channel, 
                         user
                     });
+                    return;
                 }
                 // checking if machine is free, if true then make it in progress
                 for(let hosteild in machines) {
@@ -145,12 +155,13 @@ module.exports = (io) => {
                                     channel, 
                                     user
                                 });
+                                return;
                             }
                             else {
                                 const timeoutId = setTimeout(() => {
                                     machines[hosteild][channel]._status = "inactive";
                                     activatorUsers = activatorUsers.filter(_user => _user != user);
-                                });
+                                }, 10000);
                                 machines[hosteild][channel] = {
                                     ...machines[hosteild][channel],
                                     _status: "inProgress",
@@ -169,15 +180,17 @@ module.exports = (io) => {
         // disconnected event for machines
         socket.on("disconnect", () => {
             console.log(`disconnecting client`, socket.id);
+            let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(machines[hosteild][_channel].socketId == socket.id) {
-                        machines[hosteild][channel]._status = "inactive";
+                        machines[hosteild][_channel]._status = "inactive";
+                        selectHostelId = hosteild;
                         break;
                     }
                 }
             }
-            io.emit("refresh", { machines });
+            io.emit("refresh", { machines, selectHostelId });
             socket.disconnect(true);
         });
     });
@@ -207,7 +220,10 @@ module.exports = (io) => {
 const utilities = {
     getAllMachines: (pool) => {
         return new Promise((resolve, reject) => {
-            const getAllMachines = `SELECT * FROM machine;`;
+            const getAllMachines = `SELECT m.*, 
+                (select name from hostel where id = m.hostelid) as hostelname,
+                (select name from city where id = m.cityid) as cityname,  
+            FROM machine m;`;
             pool.query(getAllMachines, (err, machines) => {
                 if (err) {
                     console.log("utilities -> getAllMachines", err);
