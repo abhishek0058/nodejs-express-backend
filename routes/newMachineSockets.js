@@ -222,7 +222,7 @@ const utilities = {
         return new Promise((resolve, reject) => {
             const getAllMachines = `SELECT m.*, 
                 (select name from hostel where id = m.hostelid) as hostelname,
-                (select name from city where id = m.cityid) as cityname,  
+                (select name from city where id = m.cityid) as cityname
             FROM machine m;`;
             pool.query(getAllMachines, (err, machines) => {
                 if (err) {
