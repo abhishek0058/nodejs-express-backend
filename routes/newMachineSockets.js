@@ -148,11 +148,11 @@ module.exports = (io) => {
                 for(let hosteild in machines) {
                     for(let _channel in machines[hosteild]) {
                         if(_channel == channel) {
-                            if(machines[hosteild][channel] != "active") {
+                            if(machines[hosteild][channel]._status != "active") {
                                 io.emit('error_while_turning_machine_on', {
                                     status: false,
                                     message: "Machine is not free",
-                                    channel, 
+                                    channel,
                                     user
                                 });
                                 return;
