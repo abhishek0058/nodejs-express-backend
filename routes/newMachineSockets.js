@@ -88,7 +88,6 @@ module.exports = (io) => {
                         machines[hosteild][channel] = {
                             ...machines[hosteild][channel],
                             _status: "active",
-                            socketId: null,
                             user: null, 
                             timer: null
                         };
@@ -125,7 +124,7 @@ module.exports = (io) => {
             if(activatorUsers.indexOf(user) != -1) {
                 io.emit('error_while_turning_machine_on', {
                     status: false,
-                    message: "You are in queue",
+                    message: "You are already in queue",
                     channel, 
                     user
                 });
@@ -138,7 +137,7 @@ module.exports = (io) => {
                     console.log('err', err);
                     io.emit('error_while_turning_machine_on', {
                         status: false,
-                        message: "User account not found",
+                        message: "Not enough cycles in the account",
                         channel, 
                         user
                     });
@@ -159,7 +158,8 @@ module.exports = (io) => {
                             }
                             else {
                                 const timeoutId = setTimeout(() => {
-                                    machines[hosteild][channel]._status = "inactive";
+                                    // TODO: don't set it as active, instead emit an event for machine to check it's state
+                                    // machines[hosteild][channel]._status = "active";
                                     activatorUsers = activatorUsers.filter(_user => _user != user);
                                 }, 10000);
                                 machines[hosteild][channel] = {
