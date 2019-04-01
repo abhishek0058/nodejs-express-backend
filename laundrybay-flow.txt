@@ -1,0 +1,107 @@
+TODO: make an api to run `utilities.getAllMachines()` in such a way that it fetches the newly added machines from the database and
+    add those machines in their corrosponding hostels.
+    Steps:
+        1 -> Make an array of machineIds and execute the query in the following way:
+            select * from machines where id not in [array of machines]
+        2 -> After executing this query we will have machines which are not currently in the state, hence simply add them in the state.
+
+TODO: handle `error_while_turning_machine_on` in the app
+
+/////
+FLOW
+
+1- Server will fetch all the machines from the machine table
+    -> utilities.getAllMachines()
+        This function will set all the machines in the global variable `machines`, this is otherwise null.
+
+
+////
+EVENTS
+
+    I-  USER events:
+        
+        1- `refresh` -> this event is emit by server to all the users. This event will have all the machines of the state and 
+            the hostelid for which the state has changed.
+            @output
+                a) machines
+                b) selectHostelId 
+    
+        2- `machine_on` -> this event is emitted by the user to tell the server to start the machine. This event triggers a new event for machine.
+            @params
+                a) user (id)
+                b) channel
+
+            @actions
+                a) This function will check if the user has already requested for this event
+                    ->  activatorUsers.indexOf(user) != -1
+
+                b) It will then check the cycles from the account in the database
+                    ->  (err || (result && result[0] && result[0].cycles_left == 0))
+                
+                c) It will check the status of machine in the state
+                    ->  (machines[hosteild][channel]._status != "active")
+
+                d) 
+                    It will set a timeout of 10 seconds after which it will release the user from the queue
+                    It will then, set the _status of the machine as `inProgress` and store the `timeoutId` in the state for that machine
+
+                    After getting the cycle_time from the state, it will emit for the machine 
+                    `turn_machine_on`
+                    @params
+                        a) channel 
+                        b) user 
+                        c) cycle_time
+
+        3-  `error_while_turning_machine_on` -> this event is emitted by the server for the user to tell that an error has occurred.
+            @output
+                a)  status -> false,
+                b)  message: ENUM["Machine is not free", "You are already in queue", "Not enough cycles in the account"]
+                c)  channel,
+                d)  user
+
+    II- MACHINE events:
+        1-  `registerMachine` -> This event is emitted by the machine to tell the server that it is active.
+            @params
+                a) channel
+            
+            @actions
+                a) Server will then check if, the machine has any pending cycle.
+                    if yes, then it will tell the machine to start itself and reset its state.
+                    `reset_previouse_state`
+                        @params
+                            i)      channel 
+                            ii)     timer 
+                            iii)    user
+                    else, it will just make the machine active and add the `socket.id` in the state.
+
+                    In the end, server will emit the new state to all the users along side with the corrosponding hosteild.
+
+        2-  `machine_started` -> This event is emitted by the machine to tell the server that it has started.
+            Server will make the machine `busy` and if any timeout is running then it will clear it.
+
+            In the end, the server will emit the new state of the server to all the users.
+
+        3-  `machine_stopped` -> This event is emitted by the machine. It will tell the server that the machine has stopped.
+            Server will then make the machine `active` and make `user` -> null and `timer` -> null
+
+            In the end, the server will emit the new state of the server to all the users.
+
+        4-  `tick` -> This event is emitted by the machine. It will tell the server the updated timer.
+            Server will update the timer of that machine in the state and and the new state to all the users.
+            @params
+                a)  channel
+                b)  timer
+        5-  `turn_machine_on` -> This event is emitted by the server to tell the machine to start.
+            @output
+                a)  channel
+                b)  user
+                c)  cycle_time
+
+        
+    III- SERVER event
+
+        1- `disconnect` -> this is triggered whenever any socket is disconnects. 
+            Therefore, server will find the machine which is getting disconnected and make the _status = `inactive`
+            
+            In the end, the server will emit the new state of the server to all the users.
+
