@@ -24,11 +24,13 @@ module.exports = (io) => {
         socket.on("registerMachine", payload => {
             console.log("payload", payload);
             console.log("socket Id", socket.id);
-            const { channel } = payload;
+            const channel = payload._channel;
             // Searching for machine in the machines array
             let selectHostelId = null;
             for(let hosteild in machines) {
+                console.log('registerMachine -> hostelid', hostelid);
                 for(let _channel in machines[hosteild]) {
+                    console.log("registerMachine -> channel", _channel)
                     if(_channel == channel) {
                         const { timer, user } = machines[hosteild][channel];
                         if(!timer) {
