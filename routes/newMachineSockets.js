@@ -214,6 +214,18 @@ module.exports = (io) => {
         res.json({ machines });
     })
 
+    router.get('/refreshMachineList', (req, res) => {
+        utilities.refreshMachineList(pool, machines)
+        .then(result => {
+            console.log('/refreshMachineList -> result', result);
+            res.send(`${result.length} machines will going to add to the current list. ${JSON.stringify(result)}`)
+        })
+        .catch(err => {
+            console.log('/refreshMachineList -> err', err)
+            res.json(err);            
+        });
+    });
+
     return router;
 };
 
@@ -249,5 +261,29 @@ const utilities = {
                 resolve(result);
             });
         })
+    },
+    refreshMachineList: (pool, machines) => {
+        return new Promise((resolve, reject) => {
+            const ids = [];
+            for(let hosteild in machines) {
+                for(let _channel in machines[hosteild]) {
+                    ids.push(machines[hosteild][_channel].id);
+                }
+            }
+            const refreshQuery = `SELECT m.*, 
+                (select name from hostel where id = m.hostelid) as hostelname,
+                (select name from city where id = m.cityid) as cityname
+            FROM machine m where id not in (${ids.toString()});`;
+
+            pool.query(refreshQuery, (err, result) => {
+                if(err) {
+                    console.log('err in refreshQuery', err);
+                    return reject(err);
+                }
+                else {
+                    return resolve(result);
+                }
+            });
+        });
     }
 }
