@@ -28,7 +28,7 @@ module.exports = (io) => {
             // Searching for machine in the machines array
             let selectHostelId = null;
             for(let hosteild in machines) {
-                console.log('registerMachine -> hostelid', hostelid);
+                console.log('registerMachine -> hostelid', hosteild);
                 for(let _channel in machines[hosteild]) {
                     console.log("registerMachine -> channel", _channel)
                     if(_channel == channel) {
@@ -42,6 +42,7 @@ module.exports = (io) => {
                             machines[hosteild][channel]._status = "busy";
                         }
                         selectHostelId = hosteild;
+                        console.log("new machine", machines[hosteild][channel]);
                     }
                 }
             }
