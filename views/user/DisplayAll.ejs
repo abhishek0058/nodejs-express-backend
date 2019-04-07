@@ -48,10 +48,16 @@
         $('#result').html(htm)
     }
     var url = '/user/DisplayAllJSON';
-    $.getJSON(url, function (data) {
-        makeCard(data);
-        USERS = data.result;
-    })
+    
+    function refresh() {
+        $.getJSON(url, function (data) {
+            makeCard(data);
+            USERS = data.result;
+        });
+    }
+    
+    refresh();
+
     $(document).ready(() => {
 
         $('#result').on('click', '.change', e => {
@@ -64,10 +70,10 @@
             var balance = $('#balance').val();
             var id = e.target.attributes[0].value;
             $.post(`/account/change_balance/${id}/${balance}`, data => {
-                var url = '/user/DisplayAllJSON'
-                $.getJSON(url, function (data) {
-                    makeCard(data)
-                })
+                $('#searchBox').val('');
+                refresh();
+                // var url = '/user/DisplayAllJSON'
+                // $.getJSON(url, (_data_) => makeCard(_data_));
             })
         })
         $('#result').on(`click`, '.delete', e => {
@@ -78,13 +84,12 @@
         })
         $('#searchBox').keyup((e) => {
             const query = e.target.value;
-            console.log("query", query, USERS);
             const filteredData = USERS.filter((user) => {
                 const { email, mobile, name } = user;
                 if(email.includes(query) || mobile.includes(query) || name.includes(query))
                     return true;
                 return false;
-            })
+            });
             makeCard({ result: filteredData });
         })
     })
@@ -105,9 +110,7 @@
 
 <body>
     <div class='container'>
-        <center>
-            <h3>List of Users</h3>
-        </center>
+        <h2>List of Users</h2>
         <label style="margin-top: 20px">Search Box</label>
         <input type="text" id="searchBox" placeholder="Name, Mobile or Email" class="form-control"
             style="width: 300px" />
