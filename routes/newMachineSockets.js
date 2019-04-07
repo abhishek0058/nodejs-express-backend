@@ -135,7 +135,7 @@ module.exports = (io) => {
             }
             // This is validate the user and check cycles at the same time
             const getCyclesLeft = `select cycles_left from account where userid = ?`;
-            pool.query(getCyclesLeft, user, (err, result) => {
+            pool.query(getCyclesLeft, [user], (err, result) => {
                 if(err || (result && result[0] && result[0].cycles_left == 0)) {
                     console.log('err', err);
                     io.emit('error_while_turning_machine_on', {
