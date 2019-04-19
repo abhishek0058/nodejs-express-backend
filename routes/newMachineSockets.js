@@ -85,7 +85,7 @@ module.exports = (io) => {
          socket.on("machine_stopped", (payload) => {
             console.log("payload", payload);
             // make it running and register the user for it
-            const { channel, user } = payload;
+            const channel = payload._channel;
             let selectHostelId = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
