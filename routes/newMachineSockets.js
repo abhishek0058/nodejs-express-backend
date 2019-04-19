@@ -97,6 +97,7 @@ module.exports = (io) => {
                             timer: null
                         };
                         selectHostelId = hosteild;
+                        console.log("changing machine status", machines[hosteild][channel]);
                         break;
                     }
                 }
@@ -191,6 +192,7 @@ module.exports = (io) => {
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(machines[hosteild][_channel].socketId == socket.id) {
+                        console.log("disconnecting machine from the server -> chaning status", machines[hosteild][_channel])
                         machines[hosteild][_channel]._status = "inactive";
                         selectHostelId = hosteild;
                         break;
