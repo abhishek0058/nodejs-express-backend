@@ -92,10 +92,11 @@ module.exports = (io) => {
             console.log("payload", payload);
             // make it running and register the user for it
             const channel = payload._channel;
-            let selectHostelId = null;
+            let selectHostelId = null, user = null;
             for(let hosteild in machines) {
                 for(let _channel in machines[hosteild]) {
                     if(_channel == channel && machines[hosteild][_channel]._status == "busy" ) {
+                        user = machines[hosteild][channel].user; 
                         machines[hosteild][channel] = {
                             ...machines[hosteild][channel],
                             _status: "active",
