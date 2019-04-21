@@ -38,9 +38,9 @@ module.exports = (io) => {
                     console.log("registerMachine -> channel", _channel)
                     if(_channel == channel) {
                         const { timer, user } = machines[hosteild][channel];
+                        machines[hosteild][channel]._status = "active";
                         if(!timer) {
                             machines[hosteild][channel].socketId = socket.id;
-                            machines[hosteild][channel]._status = "active";
                         }
                         else if(timer) {
                             io.emit("reset_previouse_state", { channel, timer, user });
