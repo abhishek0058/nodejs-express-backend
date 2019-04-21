@@ -1,3 +1,8 @@
+const POPUP = {
+    machineStarted: "machineStarted",
+    machineStopped: "machineStopped"
+};
+
 // The function will take `io` as a parameter
 module.exports = (io) => {
     // make router instance
@@ -79,6 +84,7 @@ module.exports = (io) => {
             // remove user from the activators list
             activatorUsers = activatorUsers.filter(_user => _user != user);
             io.emit("refresh", { machines, selectHostelId });
+            io.emit("show_pop_up", { user, type: POPUP.machineStarted });
         });
 
          // event the machine to verify that it has stopped by the user
@@ -103,6 +109,7 @@ module.exports = (io) => {
                 }
             }
             io.emit("refresh", { machines, selectHostelId });
+            io.emit("show_pop_up", { user, type: POPUP.machineStopped });
         });
 
         // event for machine to keep the timer in sync
@@ -221,6 +228,11 @@ module.exports = (io) => {
 
     router.get('/', (req,res) => {
         res.json({ machines });
+    });
+
+    router.get('/popup/:user/:type', (req, res) => {
+        const { user, type } = req.params;
+        io.emit("show_pop_up", { user, type });
     })
 
     router.get('/refreshMachineList', (req, res) => {
