@@ -30,6 +30,7 @@ module.exports = (io) => {
             console.log("payload", payload);
             console.log("socket Id", socket.id);
             const channel = payload._channel;
+            const { timeObj } = payload;
             // Searching for machine in the machines array
             let selectHostelId = null;
             for(let hosteild in machines) {
@@ -41,6 +42,10 @@ module.exports = (io) => {
                         machines[hosteild][channel]._status = "active";
                         if(!timer) {
                             machines[hosteild][channel].socketId = socket.id;
+                        }
+                        else if(timeObj) {
+                            machines[hosteild][channel]._status = "busy";
+                            machines[hosteild][channel].timer = timeObj;
                         }
                         else if(timer) {
                             io.emit("reset_previouse_state", { channel, timer, user });
