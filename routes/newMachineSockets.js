@@ -40,10 +40,8 @@ module.exports = (io) => {
                     if(_channel == channel) {
                         const { timer, user } = machines[hosteild][channel];
                         machines[hosteild][channel]._status = "active";
-                        if(!timer) {
-                            machines[hosteild][channel].socketId = socket.id;
-                        }
-                        else if(timeObj) {
+                        machines[hosteild][channel].socketId = socket.id;
+                        if(timeObj) {
                             machines[hosteild][channel]._status = "busy";
                             machines[hosteild][channel].timer = timeObj;
                         }
