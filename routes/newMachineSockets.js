@@ -162,6 +162,14 @@ module.exports = (io) => {
                     });
                     return;
                 }
+                const deductCycle = `update account set cycles_left = cycles_left - 1 where userid = ${user};`;
+                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (${userid}, ${channel}, NOW());`;
+
+                pool.query(deductCycle + insertCycleHistory, (_error, _result_) => {
+                    console.log("deductCycle", _result_[0]);
+                    console.log("insertCycleHistory", _result_[1]);
+                });
+
                 // checking if machine is free, if true then make it in progress
                 for(let hosteild in machines) {
                     for(let _channel in machines[hosteild]) {
