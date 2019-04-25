@@ -163,7 +163,7 @@ module.exports = (io) => {
                     return;
                 }
                 const deductCycle = `update account set cycles_left = cycles_left - 1 where userid = ${user};`;
-                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (${userid}, ${channel}, NOW());`;
+                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (${user}, ${channel}, NOW());`;
 
                 pool.query(deductCycle + insertCycleHistory, (_error, _result_) => {
                     console.log("deductCycle", _result_[0]);
