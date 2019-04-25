@@ -118,7 +118,6 @@ module.exports = (io) => {
 
         // event for machine to keep the timer in sync
         socket.on("tick", (payload) => {
-            console.log("payload", payload);
             const timer = payload.timeObj;
             const channel = payload._channel;
             let selectHostelId = null;
@@ -127,7 +126,6 @@ module.exports = (io) => {
                     if(_channel == channel) {
                         machines[hosteild][channel].timer = timer;
                         selectHostelId = hosteild;
-                        console.log("timer changed", machines[hosteild][channel].timer);
                         break;
                     }
                 }
