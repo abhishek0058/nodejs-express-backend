@@ -1,124 +1,171 @@
 <html>
-<head>
+  <head>
     <!-- start: Css -->
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="keyword" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta name="keyword" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Home</title>
-    <link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css" />
     <!-- plugins -->
     <script src="/admin/asset/js/jquery.min.js"></script>
     <script src="/admin/asset/js/jquery.ui.min.js"></script>
     <script src="/admin/asset/js/bootstrap.min.js"></script>
-</head>
-<script>
+  </head>
+  <script>
     var USERS = [];
     function makeCard(data) {
-        let htm = '';
-        htm += '<center><br>'
-        htm += '<table class="table table-bordered table-hover" style="">'
-        htm += '<thead>'
-        htm += '<th><b> S No.</b></th>'
-        htm += '<th><b>Name</b></th>'
-        htm += '<th><b>Mobile</b></th>'
-        htm += '<th><b>Email</b></th>'
-        htm += '<th><b>Account Number</b></th>'
-        htm += '<th><b>Balance</b></th>'
-        htm += '<th><b>Change Balance</b></th>'
-        htm += '<th><b>Delete</b></th>'
-        htm += '</thead>'
-        // console.log(data)
-        $.each(data.result, function (i, item) {
-            $acc = (item.id == 0) ? '' : item.id;
-            $bal = (item.cycles_left < 0) ? '' : item.cycles_left;
-            htm += `<tr>
-            <td>${i+1}</td>
+      let htm = "";
+      htm += "<center><br>";
+      htm += '<table class="table table-bordered table-hover" style="">';
+      htm += "<thead>";
+      htm += "<th><b> S No.</b></th>";
+      htm += "<th><b>Name</b></th>";
+      htm += "<th><b>Mobile</b></th>";
+      htm += "<th><b>Email</b></th>";
+      htm += "<th><b>Account Number</b></th>";
+      htm += "<th><b>Balance</b></th>";
+      htm += "<th><b>Change Balance</b></th>";
+      htm += "<th><b>Delete</b></th>";
+      htm += "</thead>";
+      // console.log(data)
+      $.each(data.result, function(i, item) {
+        $acc = item.id == 0 ? "" : item.id;
+        $bal = item.cycles_left < 0 ? "" : item.cycles_left;
+        htm += `<tr>
+            <td>${i + 1}</td>
             <td>${item.name}</td>
             <td>${item.mobile}</td>
             <td>${item.email}</td>
             <td>${$acc}</td>
             <td>${$bal}</td>
-            <td><button data='${JSON.stringify(item)}' class='change btn btn-info'>Change Balance</button></td>
-            <td><button id=${item.userid} class='delete btn btn-danger'>Delete</button></td>
-            </tr> `
+            <td><button data='${JSON.stringify(
+              item
+            )}' class='change btn btn-info'>Change Balance</button></td>
+            <td><button id=${
+              item.userid
+            } class='delete btn btn-danger'>Delete</button></td>
+            </tr> `;
+      });
+      $("#result").html(htm);
+    }
+    var url = "/user/DisplayAllJSON";
 
-        })
-        $('#result').html(htm)
-    }
-    var url = '/user/DisplayAllJSON';
-    
     function refresh() {
-        $.getJSON(url, function (data) {
-            makeCard(data);
-            USERS = data.result;
-        });
+      $.getJSON(url, function(data) {
+        makeCard(data);
+        USERS = data.result;
+      });
     }
-    
+
     refresh();
+    getHostels();
 
     $(document).ready(() => {
-
-        $('#result').on('click', '.change', e => {
-
-            $('.change').attr("disabled", true);
-            data = JSON.parse(e.target.attributes[0].value)
-            $('#result thead').append(add(data))
-        })
-        $('#result').on(`click`, '.edit', e => {
-            var balance = $('#balance').val();
-            var id = e.target.attributes[0].value;
-            $.post(`/account/change_balance/${id}/${balance}`, data => {
-                $('#searchBox').val('');
-                refresh();
-                // var url = '/user/DisplayAllJSON'
-                // $.getJSON(url, (_data_) => makeCard(_data_));
-            })
-        })
-        $('#result').on(`click`, '.delete', e => {
-            var id = e.target.attributes[0].value;
-            if (confirm('Are you sure to delete this user ?')) {
-                window.location.href = `/user/delete/${id}`;
-            }
-        })
-        $('#searchBox').keyup((e) => {
-            const query = e.target.value;
-            const filteredData = USERS.filter((user) => {
-                const { email, mobile, name } = user;
-                if(email.includes(query) || mobile.includes(query) || name.includes(query))
-                    return true;
-                return false;
-            });
-            makeCard({ result: filteredData });
-        })
-    })
+      $("#result").on("click", ".change", e => {
+        $(".change").attr("disabled", true);
+        data = JSON.parse(e.target.attributes[0].value);
+        $("#result thead").append(add(data));
+      });
+      $("#result").on(`click`, ".edit", e => {
+        var balance = $("#balance").val();
+        var id = e.target.attributes[0].value;
+        $.post(`/account/change_balance/${id}/${balance}`, data => {
+          $("#searchBox").val("");
+          refresh();
+          // var url = '/user/DisplayAllJSON'
+          // $.getJSON(url, (_data_) => makeCard(_data_));
+        });
+      });
+      $("#result").on(`click`, ".delete", e => {
+        var id = e.target.attributes[0].value;
+        if (confirm("Are you sure to delete this user ?")) {
+          window.location.href = `/user/delete/${id}`;
+        }
+      });
+      $("#searchBox").keyup(e => {
+        const query = e.target.value;
+        const filteredData = USERS.filter(user => {
+          const { email, mobile, name } = user;
+          if (
+            email.includes(query) ||
+            mobile.includes(query) ||
+            name.includes(query)
+          )
+            return true;
+          return false;
+        });
+        makeCard({ result: filteredData });
+      });
+      $("#hostelid").change(event => {
+          const id = event.target.value;
+          if(id != "0") {
+              getUserByHostelId(id);
+          } else {
+            makeCard({ result: USERS });
+          } 
+      })
+    
+    });
     var add = data => {
-        $acc = (data.id == 0) ? '' : data.id;
-        $bal = (data.cycles_left < 0) ? '' : data.cycles_left;
-        return `<tr>
+      $acc = data.id == 0 ? "" : data.id;
+      $bal = data.cycles_left < 0 ? "" : data.cycles_left;
+      return `<tr>
             <td>${0}</td>
             <td>${data.name}</td>
             <td>${data.mobile}</td>
             <td>${data.email}</td>
             <td>${$acc}</td> 
             <td><input id=balance type=number value='${$bal}' class='form-control'></td>
-            <td><button id='${data.id}' class='edit btn btn-success'>Change</button></td>
-            </tr> `
+            <td><button id='${
+              data.id
+            }' class='edit btn btn-success'>Change</button></td>
+            </tr> `;
+    };
+    
+    function getHostels() {
+        $.getJSON(`/hostel/all`, data => {
+            $.each(data.result, (index, item) => {
+                $('#hostelid').append($('<option>').val(item.id).text(item.name));
+            });
+        })
     }
-</script>
 
-<body>
-    <div class='container'>
-        <h2>List of Users</h2>
-        <label style="margin-top: 20px">Search Box</label>
-        <input type="text" id="searchBox" placeholder="Name, Mobile or Email" class="form-control"
-            style="width: 300px" />
-        <div class="row">
-            <div id="change"></div>
-            <div id="result"></div>
+    function getUserByHostelId(id) {
+        $.getJSON(`/hostel/users/${id}`, response => {
+            const { result } = response;
+            makeCard({ result });
+        })
+    }
+  
+  </script>
+
+  <body>
+    <div class="container">
+      <h2>List of Users</h2>
+      <div class="row">
+        <div class="col-lg-6">
+            <label style="margin-top: 20px">Search Box</label>
+            <input
+                type="text"
+                id="searchBox"
+                placeholder="Name, Mobile or Email"
+                class="form-control"
+                style="width: 300px"
+            />
         </div>
+        <div class="col-lg-6">
+            <label style="margin-top: 20px">Hostels</label>
+            <select id="hostelid" class="form-control">
+                <option value="0">All hostel</option>
+            </select>
+        </div>
+      </div>
+      <div class="row">
+        <div id="change"></div>
+        <div id="result"></div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>

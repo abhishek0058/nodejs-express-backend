@@ -70,7 +70,7 @@ router.get('/delete/:id', (req, res) => {
 
 router.get('/users/:hostelid', (req, res) => {
     const { hostelid } = req.params;
-    const query = `select * from user where hostelid = ${hostelid}`;
+    const query = `select U.*,A.* from user U, account A where hostelid = ${hostelid} and U.id=A.userid`;
     pool.query(query, (err, result) => {
         if(err) {
             console.log(err)
