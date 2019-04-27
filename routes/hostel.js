@@ -66,5 +66,19 @@ router.get('/delete/:id', (req, res) => {
             res.json({ result: true })
         }
     })
+});
+
+router.get('/users/:hostelid', (req, res) => {
+    const { hostelid } = req.params;
+    const query = `select U.*,A.* from user U, account A where hostelid = ${hostelid} and U.id=A.userid`;
+    pool.query(query, (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: [] })
+        } else {
+            res.json({ result });
+        }
+    });
 })
+
 module.exports = router;
