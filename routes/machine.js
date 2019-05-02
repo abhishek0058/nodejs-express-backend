@@ -48,8 +48,6 @@ router.get("/all", (req, res) => {
       console.log(err);
       res.json({ result: false });
     } else {
-      console.log(result);
-      
       res.json({ result });
     }
   });
