@@ -27,16 +27,16 @@ module.exports = (io) => {
         
         // event for machine to get registered as active
         socket.on("registerMachine", payload => {
-            console.log("payload", payload);
+            console.log("registerMachine -> payload", payload);
             console.log("socket Id", socket.id);
             const channel = payload._channel;
             const { timeObj } = payload;
             // Searching for machine in the machines array
             let selectHostelId = null;
             for(let hosteild in machines) {
-                console.log('registerMachine -> hostelid', hosteild);
+                // console.log('registerMachine -> hostelid', hosteild);
                 for(let _channel in machines[hosteild]) {
-                    console.log("registerMachine -> channel", _channel)
+                    // console.log("registerMachine -> channel", _channel)
                     if(_channel == channel) {
                         const { timer, user } = machines[hosteild][channel];
                         machines[hosteild][channel]._status = "active";
@@ -161,12 +161,15 @@ module.exports = (io) => {
                     return;
                 }
                 const deductCycle = `update account set cycles_left = cycles_left - 1 where userid = ${user};`;
-                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (${user}, ${channel}, NOW());`;
-
-                pool.query(deductCycle + insertCycleHistory, (_error, _result_) => {
-                    console.log("deductCycle", _result_[0]);
-                    console.log("insertCycleHistory", _result_[1]);
+                
+                pool.query(deductCycle, (_error, _result_) => {
+                    console.log("deductCycle", _result_);
                 });
+                
+                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values(?, ?, NOW());`;
+                pool.query(insertCycleHistory, [user, channel], (_error, _result_) => {
+                    console.log("insertCycleHistory", _result_);
+                })
 
                 // checking if machine is free, if true then make it in progress
                 for(let hosteild in machines) {
