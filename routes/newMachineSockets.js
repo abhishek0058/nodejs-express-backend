@@ -51,6 +51,16 @@ module.exports = (io) => {
                         }
                         selectHostelId = hosteild;
                         console.log("new machine", machines[hosteild][channel]);
+                        // make an entry in database
+                        const query = `insert into machine_status(channel, status, time) values(?, ?, now())`;
+                        pool.query(query, [_channel, 'on'], (_err_) => {
+                            if(_err_) {
+                                console.log("error during submitting machine_status, -> ON", _err_);
+                            }
+                            else {
+                                console.log('status added in the database');
+                            }
+                        });
                     }
                 }
             }
@@ -215,6 +225,16 @@ module.exports = (io) => {
                         console.log("disconnecting machine from the server -> chaning status", machines[hosteild][_channel])
                         machines[hosteild][_channel]._status = "inactive";
                         selectHostelId = hosteild;
+                        // make an entry in database
+                        const query = `insert into machine_status(channel, status, time) values(?, ?, now())`;
+                        pool.query(query, [_channel, 'off'], (err, result) => {
+                            if(err) {
+                                console.log("error during submitting machine_status", err);
+                            }
+                            else {
+                                console.log('status added in the database');
+                            }
+                        });
                         break;
                     }
                 }
