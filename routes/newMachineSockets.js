@@ -178,7 +178,12 @@ module.exports = (io) => {
                 
                 const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values(?, ?, NOW());`;
                 pool.query(insertCycleHistory, [user, channel], (_error, _result_) => {
+                    if(_error) {
+                     console.log("insertCycleHistory -> _error", _error);   
+                    }
+                    else {
                     console.log("insertCycleHistory", _result_);
+                    }
                 })
 
                 // checking if machine is free, if true then make it in progress
