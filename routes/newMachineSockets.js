@@ -27,16 +27,16 @@ module.exports = (io) => {
         
         // event for machine to get registered as active
         socket.on("registerMachine", payload => {
-            console.log("payload", payload);
+            console.log("registerMachine -> payload", payload);
             console.log("socket Id", socket.id);
             const channel = payload._channel;
             const { timeObj } = payload;
             // Searching for machine in the machines array
             let selectHostelId = null;
             for(let hosteild in machines) {
-                console.log('registerMachine -> hostelid', hosteild);
+                // console.log('registerMachine -> hostelid', hosteild);
                 for(let _channel in machines[hosteild]) {
-                    console.log("registerMachine -> channel", _channel)
+                    // console.log("registerMachine -> channel", _channel)
                     if(_channel == channel) {
                         const { timer, user } = machines[hosteild][channel];
                         machines[hosteild][channel]._status = "active";
@@ -51,6 +51,16 @@ module.exports = (io) => {
                         }
                         selectHostelId = hosteild;
                         console.log("new machine", machines[hosteild][channel]);
+                        // make an entry in database
+                        const query = `insert into machine_status(channel, status, time) values(?, ?, now())`;
+                        pool.query(query, [_channel, 'on'], (_err_) => {
+                            if(_err_) {
+                                console.log("error during submitting machine_status, -> ON", _err_);
+                            }
+                            else {
+                                console.log('status added in the database');
+                            }
+                        });
                     }
                 }
             }
@@ -161,12 +171,20 @@ module.exports = (io) => {
                     return;
                 }
                 const deductCycle = `update account set cycles_left = cycles_left - 1 where userid = ${user};`;
-                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values (${user}, ${channel}, NOW());`;
-
-                pool.query(deductCycle + insertCycleHistory, (_error, _result_) => {
-                    console.log("deductCycle", _result_[0]);
-                    console.log("insertCycleHistory", _result_[1]);
+                
+                pool.query(deductCycle, (_error, _result_) => {
+                    console.log("deductCycle", _result_);
                 });
+                
+                const insertCycleHistory = `insert into cycle_use_history (userid, channel, date) values(?, ?, NOW());`;
+                pool.query(insertCycleHistory, [user, channel], (_error, _result_) => {
+                    if(_error) {
+                     console.log("insertCycleHistory -> _error", _error);   
+                    }
+                    else {
+                    console.log("insertCycleHistory", _result_);
+                    }
+                })
 
                 // checking if machine is free, if true then make it in progress
                 for(let hosteild in machines) {
@@ -212,6 +230,16 @@ module.exports = (io) => {
                         console.log("disconnecting machine from the server -> chaning status", machines[hosteild][_channel])
                         machines[hosteild][_channel]._status = "inactive";
                         selectHostelId = hosteild;
+                        // make an entry in database
+                        const query = `insert into machine_status(channel, status, time) values(?, ?, now())`;
+                        pool.query(query, [_channel, 'off'], (err, result) => {
+                            if(err) {
+                                console.log("error during submitting machine_status", err);
+                            }
+                            else {
+                                console.log('status added in the database');
+                            }
+                        });
                         break;
                     }
                 }
