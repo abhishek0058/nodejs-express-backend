@@ -128,8 +128,8 @@ router.post('/verify_otp', (req, res) => {
                 console.log("from pending user -> ", result);
                 // move user from pending_users to users
                 const query = `delete from pending_users where mobile = '${mobile}';insert into user (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}');`;
-                const addFreeCycle = `insert into account (userid, packageid, cycles_left) VALUES (?, 16, 1);`;
-                const queryHistory = `insert into purchase_history(userid, packageid, amount, date) values(?, 16, 0, CURDATE());`;
+                const addFreeCycle = `insert into account (userid, packageid, cycles_left) VALUES (?, 16, 0);`;
+                // const queryHistory = `insert into purchase_history(userid, packageid, amount, date) values(?, 16, 0, CURDATE());`;
                 console.log("query", query);
                 // console.log("addFreeCycle", addFreeCycle);
                 pool.query(query, (err2, result2) => {
@@ -139,7 +139,7 @@ router.post('/verify_otp', (req, res) => {
                             message: "internal error occurred, please "
                         })
                     } else {
-                        pool.query(addFreeCycle + queryHistory, [result2[1].insertId, result2[1].insertId], (addError, addreuslt) => {
+                        pool.query(addFreeCycle, [result2[1].insertId], (addError, addreuslt) => {
                             if (addError) {
                                 console.log("add Error", addError);
                             } else {
