@@ -51,18 +51,31 @@
         }
 
         function makeTable(data) {
-            let table = "<tr><td>ID</td><td>City</td><td>Name</td><td>Delete</td></tr>"
+            let table = "<tr><td>ID</td><td>City</td><td>Name</td><td>Free cycle</td><td>Delete</td></tr>";
             $.each(data, (i, item) => {
+                let free_cycle = `<button class="btn btn-primary free_cycle" id="${item.id}" status="${item.free_cycle}">Yes</button>`;
+                if(item.free_cycle == 'true') {
+                    free_cycle = `<button class="btn btn-danger free_cycle" id="${item.id}" status="${item.free_cycle}">No</button>`;
+                }
                 table +=
-                    `<tr><td>${item.id}</td>
-                    <td>${item.cityname}</td>
-                    <td>${item.name}</td>
-                    <td><button class="btn btn-danger delete" id=${item.id}>Delete</button></td>
+                    `<tr>
+                        <td>${item.id}</td>
+                        <td>${item.cityname}</td>
+                        <td>${item.name}</td>
+                        <td>${free_cycle}</td>
+                        <td><button class="btn btn-danger delete" id=${item.id}>Delete</button></td>
                     </tr>`
             })
             table += "</table>"
             $('#result').html(table)
         }
+
+        $('#result').on('click', '.free_cycle', (e) => {
+            const id = e.target.attributes[1].value;
+            const status = e.target.attributes[2].value;
+            const _url = `/hostel/change-free-cycle/${id}/${status}`;
+            $.get(_url, { id }, () => refresh());
+        });
 
         refresh()
     </script>
