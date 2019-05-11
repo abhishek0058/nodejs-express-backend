@@ -575,28 +575,32 @@ router.post(`/update-location-add-free-cycle`, (req, res) => {
 
     pool.query(getUser, [email, email, password], (err, userResult) => {
         if(err) {
+            console.log('getUser -> err', err);
             return res.json({ result: false, message: 'Internal error' });
         }
         else if(userResult.length == 0) {
             return res.json({ result: false, message: 'User not found' });
         }
         else {
-            const updateHostelAndCity = `update user set hostelid = ? and cityid = ? where id = ?`;
+            const updateHostelAndCity = `update user set hostelid = ?, cityid = ? where id = ?`;
             const userId = userResult[0].id;
             pool.query(updateHostelAndCity, [hostelid, cityid, userId], (err, updateResult) => {
                 if(err) {
+                    console.log('updateHostelAndCity -> err', err);
                     return res.json({ result: false, message: 'Internal error' });
                 }
-                const getHostelStatus = `select free_cycle from hostel where id = ?`;
-                pool.query(getHostelStatus, [hostelid], (err, hostelStatus) => {
-                    if(err) {
-                        return res.json({ result: false, message: 'Internal error' });
-                    }
-                    if(hostelStatus && hostelStatus[0] && hostelStatus[0].free_cycle == 'true') {
-                        addFreeCycleInUserAccount(userId)
-                    }
-                    return res.json({ result: true });
-                })
+                else {
+                    const getHostelStatus = `select free_cycle from hostel where id = ?`;
+                    pool.query(getHostelStatus, [hostelid], (err, hostelStatus) => {
+                        if(err) {
+                            return res.json({ result: false, message: 'Internal error' });
+                        }
+                        if(hostelStatus && hostelStatus[0] && hostelStatus[0].free_cycle == 'true') {
+                            addFreeCycleInUserAccount(userId)
+                        }
+                        return res.json({ result: true });
+                    })
+                }
             })
         }
     });
@@ -617,6 +621,7 @@ router.post(`/update-location-add-free-cycle`, (req, res) => {
 })
 
 function addFreeCycleInUserAccount(userId) {
+    console.log("addFreeCycleInUserAccount -> user -> ", userId);
     const addFreeCycle = `insert into account (userid, packageid, cycles_left) VALUES (?, 16, 1);`;
     const queryHistory = `insert into purchase_history(userid, packageid, amount, date) values(?, 16, 0, CURDATE());`;
     pool.query(addFreeCycle + queryHistory, [userId, userId], (addError, addreuslt) => {
