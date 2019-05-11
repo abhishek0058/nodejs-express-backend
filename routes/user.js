@@ -604,20 +604,6 @@ router.post(`/update-location-add-free-cycle`, (req, res) => {
             })
         }
     });
-
-    const query = `update ${tableName} set ? where id = ? `;
-    pool.query(query, [req.body, id], (err) => {
-        if (err) {
-            console.log(err)
-            res.json({
-                result: false
-            })
-        } else {
-            res.json({
-                result: true
-            })
-        }
-    })
 })
 
 function addFreeCycleInUserAccount(userId) {
