@@ -608,7 +608,7 @@ router.post(`/update-location-add-free-cycle`, (req, res) => {
 
 function updateFreeCycleInUserAccount(userId) {
     console.log("updateFreeCycleInUserAccount -> user -> ", userId);
-    const addFreeCycle = `update account set cycle = cycle + 1 where userid = ?;`;
+    const addFreeCycle = `update account set cycles_left = cycles_left + 1 where userid = ?;`;
     const queryHistory = `insert into purchase_history(userid, packageid, amount, date) values(?, 16, 0, CURDATE());`;
     pool.query(addFreeCycle + queryHistory, [userId, userId], (addError, addreuslt) => {
         if (addError) {
