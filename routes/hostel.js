@@ -94,4 +94,16 @@ router.get('/by-city/:cityid', (req, res) => {
     });
 });
 
+router.get('/change-free-cycle/:id/:status', (req, res) => {
+    const { id, status } = req.params;
+    const _status = status == 'true' ? 'false' : 'true';
+    const change_free_cycle = `update hostel set free_cycle = ? where id = ?`;
+    pool.query(change_free_cycle, [_status, id], (err, result) => {
+        if(err) {
+            return res.json({ result: false });
+        }
+        res.json({ result: true });
+    })
+});
+
 module.exports = router;
