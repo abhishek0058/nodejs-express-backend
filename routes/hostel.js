@@ -81,4 +81,17 @@ router.get('/users/:hostelid', (req, res) => {
     });
 })
 
+router.get('/by-city/:cityid', (req, res) => {
+    const { cityid } = req.params;
+    const query = `select * from ${tableName} where cityid = ?`;
+    pool.query(query, [cityid], (err, result) => {
+        if(err) {
+            console.log(err)
+            res.json({ result: false })
+        } else {
+            res.json({ result });
+        }
+    });
+});
+
 module.exports = router;
