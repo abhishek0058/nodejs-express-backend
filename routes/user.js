@@ -46,7 +46,7 @@ router.post('/new', (req, res) => {
                 console.log("user already exist", checkIfAlreadyExistReuslt[0]);
                 return res.json({
                     result: false,
-                    message: "This mobile number is already exist"
+                    message: "This mobile number already exists"
                 })
             }
             else if (checkIfAlreadyExistReuslt[1].length == 0) {
