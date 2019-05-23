@@ -75,17 +75,13 @@ router.get('/UserPurchesed', (req, res) => {
     })
 })
 router.get('/displayHistory', (req, res) => {
-    const query = `SELECT ph.id, u.id as user_id, u.name as user_name, p.name, p.logo, ph.amount FROM purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id`
+    const query = `SELECT ph.id, u.id as user_id, u.name as user_name, u.mobile, p.name, p.logo, ph.amount FROM purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id`
     pool.query(query, (err, result) => {
         if (err) {
             console.log(err)
-            res.json({
-                result: false
-            })
+            res.json({ result: false })
         } else {
-            res.json({
-                result
-            })
+            res.json({ result })
         }
     })
 })
