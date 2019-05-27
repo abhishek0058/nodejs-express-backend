@@ -5,15 +5,11 @@ const pool = require('./pool');
 const tableName = 'purchase_history'
 
 router.get('/single/:id', (req, res) => {
-    const {
-        id
-    } = req.params;
+    const { id } = req.params;
     pool.query(`select * from ${tableName} where id = ?`, [id], (err, result) => {
         if (err) {
             console.log(err)
-            res.json({
-                result: false
-            })
+            res.json({ result: false })
         } else {
             res.json({
                 result
@@ -109,19 +105,16 @@ router.get(`/DailyReport`,(req,res)=>{
 })
 //Daily report
 router.get('/userPurchasesDailyReport', (req, res) => {
-    const query = `SELECT ph.id,u.name as user_name, u.id as userid, p.id as packageid, u.name, p.name, p.logo, ph.amount, ph.date FROM 
+    const query = `SELECT ph.id,u.name as user_name, u.id as userid, p.id as packageid, u.name, u.mobile, p.name, p.logo, ph.amount, ph.date FROM 
                 purchase_history ph, user u, package p where ph.packageid = p.id and ph.userid = u.id and ph.date = CURDATE()
                 order by id desc`
     pool.query(query, (err, result) => {
         if (err) {
             console.log(err)
-            res.json({
-                result: false
-            })
+            res.json({ result: [] })
         } else {
-            res.json({
-                result
-            })
+            console.log('result', result);
+            res.json({ result });
         }
     })
 })
