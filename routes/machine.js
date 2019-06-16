@@ -127,5 +127,20 @@ router.get("/change_cycle/:machineid/:cycle_time", (req, res) => {
   })
 })
 
+router.get('/get-channels', (req, res) => {
+  try {
+      const query = `select m.id as machineId, channel, h.name as hostel from machine m inner join hostel h on h.id = m.hostelid`;
+      pool.query(query, (error, result) => {
+          if(error) {
+              return res.boom.internal("Internal server error occurred");
+          }
+          res.json({ result });
+      });
+  } catch(error) {
+      console.log(error);
+      return res.boom.internal("Internal server error");
+  }
+});
+
 
 module.exports = router;
