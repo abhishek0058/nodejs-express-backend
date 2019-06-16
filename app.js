@@ -26,8 +26,9 @@ var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
 var ccavReqHandler = require('./routes/ccavRequestHandler.js');
 var ccavResHandler = require('./routes/ccavResponseHandler.js');
-var ccavenue = require('./routes/ccavenue');
+// var ccavenue = require('./routes/ccavenue');
 var newMachineSocket = require("./routes/newMachineSockets")(io);
+var userReports = require('./routes/userReports');
 
 app.use(cookieSession({
   name: 'laudrybay',
@@ -80,6 +81,7 @@ app.use('/purchaseHistory', purchaseHistory);
 app.use('/queries', queries);
 app.use('/machineReports',machineReports);
 app.use('/newMachineSocket', newMachineSocket);
+app.use('/userReports', userReports);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

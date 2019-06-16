@@ -6,10 +6,7 @@ const tableName = 'user'
 const request = require('request');
 
 router.post('/login', (req, res) => {
-    const {
-        username,
-        password
-    } = req.body;
+    const { username, password } = req.body;
     const query = `select * from ${tableName} where (email = ? or mobile = ?) and password = ? `
     pool.query(query, [username, username, password], (err, result) => {
         if (err) {
@@ -24,12 +21,7 @@ router.post('/login', (req, res) => {
 router.post('/new', (req, res) => {
     try {
         const otp = Math.floor(100000 + Math.random() * 900000);
-        const {
-            name,
-            email,
-            mobile,
-            password
-        } = req.body;
+        const { name, email, mobile, password } = req.body;
 
         const checkIfAlreadyExistInUser = "select * from user where user.mobile = ?;";
         const checkIfAlreadyExistInPendingUser = "select * from pending_users where pending_users.mobile = ?;";
@@ -108,10 +100,7 @@ router.post('/resendOTP', (req, res) => {
 router.post('/verify_otp', (req, res) => {
     try {
         console.log("verfity Otp -> ", req.body);
-        const {
-            mobile,
-            otp
-        } = req.body
+        const { mobile, otp } = req.body
         pool.query(`select * from pending_users where mobile = ? and otp = ?`, [mobile, otp], (err, result) => {
             if (err) {
                 return res.json({
@@ -119,12 +108,7 @@ router.post('/verify_otp', (req, res) => {
                     message: "Invalid Otp / Mobile Number"
                 })
             } else if (result.length) {
-                const {
-                    name,
-                    email,
-                    mobile,
-                    password
-                } = result[0];
+                const { name, email, mobile, password } = result[0];
                 console.log("from pending user -> ", result);
                 // move user from pending_users to users
                 const query = `delete from pending_users where mobile = '${mobile}';insert into user (name, email, mobile, password) values('${name}', '${email}', '${mobile}', '${password}');`;
@@ -228,9 +212,7 @@ router.get('/user_verify_without_otp/:pendingUserId', (req, res) => {
 router.post('/forget_password', (req, res) => {
     console.log("forget_password -> ", req.body);
     const otp = Math.floor(100000 + Math.random() * 900000);
-    const {
-        mobile
-    } = req.body;
+    const { mobile } = req.body;
     const query = "select * from user where mobile = ?";
     try {
         pool.query(query, [req.body.mobile], (err, result) => {
@@ -271,11 +253,7 @@ router.post('/forget_password', (req, res) => {
 })
 
 router.post('/change_password', (req, res) => {
-    const {
-        otp,
-        mobile,
-        password
-    } = req.body;
+    const { otp, mobile, password } = req.body;
     console.log("change_password -> ", req.body);
 
     const fetchUserRecord = `select * from user where mobile = ?`;
@@ -444,10 +422,7 @@ router.get('/sendVerificationLink/:userid', async (req, res) => {
 })
 
 router.get('/verifyUserEmail/:id/:key', (req, res) => {
-    const {
-        id,
-        key
-    } = req.params
+    const { id, key } = req.params
     const query = `update user set email_verified = "true" where id = ? and email_security_key = ?`
     pool.query(query, [id, key], (err, result) => {
         if (err) {
@@ -545,8 +520,6 @@ router.get('/delete/:id', (req, res) => {
         res.redirect('/admin');
     }
 });
-
-
 
 router.get('/delete-pending-user/:id', (req, res) => {
     if (req.session.id) {
