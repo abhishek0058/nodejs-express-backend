@@ -245,7 +245,7 @@ module.exports = (io) => {
                 }
             }
             io.emit("refresh", { machines, selectHostelId });
-            socket.disconnect(true);
+            // socket.disconnect(true);
         });
     });
 
