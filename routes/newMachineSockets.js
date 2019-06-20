@@ -253,7 +253,17 @@ module.exports = (io) => {
     });
 
     router.get('/', (req,res) => {
-        res.json({ machines });
+        const response = machines.map(machine => {
+            return {
+                id: machine.id,
+                name: machine.name,
+                channel: machine.channel,
+                _status: machine._status,
+                timer: machine.timer,
+                inProcess: machine.inProcess
+            }
+        });
+        res.json({ response });
     });
 
     router.get('/popup/:user/:type', (req, res) => {
@@ -334,10 +344,5 @@ const utilities = {
                 }
             });
         });
-    },
-    convertTimeStringIntoTimeObj: (timeString) => {
-        if(!timeString || timeString.length == 0) return null;
-        const arr = timeString.split('-');
-        return { min: arr[0], sec: arr[1] };
     }
 }
