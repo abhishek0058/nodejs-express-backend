@@ -253,16 +253,21 @@ module.exports = (io) => {
     });
 
     router.get('/', (req,res) => {
-        const response = machines.map(machine => {
-            return {
-                id: machine.id,
-                name: machine.name,
-                channel: machine.channel,
-                _status: machine._status,
-                timer: machine.timer,
-                inProcess: machine.inProcess
+
+        const response = [];
+        for(let i in machines) {
+            for(let j in machines[i]) {
+                const machine = machines[i][j];
+                response.push({
+                    id: machine.id,
+                    name: machine.name,
+                    channel: machine.channel,
+                    _status: machine._status,
+                    timer: machine.timer,
+                    inProcess: machine.inProcess
+                })
             }
-        });
+        }
         res.json({ response });
     });
 
