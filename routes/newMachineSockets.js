@@ -277,7 +277,7 @@ module.exports = (io) => {
                     <td>${machine.name}</td>
                     <td>${machine.channel}</td>
                     <td style="color: ${color}">${machine._status}</td>
-                    <td>${machine.timer}</td>
+                    <td>${machine.timer ? JSON.stringify(machine.timer) : ''}</td>
                     <td>${machine.inProcess}</td>
                 </tr>`
             }
