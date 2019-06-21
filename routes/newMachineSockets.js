@@ -254,21 +254,36 @@ module.exports = (io) => {
 
     router.get('/', (req,res) => {
 
-        const response = [];
+        let html = `<html>
+        <table border=5>
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Name</td>
+                    <td>Channel</td>
+                    <td>Status</td>
+                    <td>Timer</td>
+                    <td>In process</td>
+                </tr>
+            </thead><tbody>` 
+
         for(let i in machines) {
             for(let j in machines[i]) {
                 const machine = machines[i][j];
-                response.push({
-                    id: machine.id,
-                    name: machine.name,
-                    channel: machine.channel,
-                    _status: machine._status,
-                    timer: machine.timer,
-                    inProcess: machine.inProcess
-                })
+                let color = machine._status == 'active' ? 'green' : 'red';
+
+                html += `<tr>
+                    <td>${machine.id}</td>
+                    <td>${machine.name}</td>
+                    <td>${machine.channel}</td>
+                    <td style="color: ${color}">${machine._status}</td>
+                    <td>${machine.timer}</td>
+                    <td>${machine.inProcess}</td>
+                </tr>`
             }
         }
-        res.json({ response });
+        html += '</tbody></table></html>'
+        res.send(html);
     });
 
     router.get('/popup/:user/:type', (req, res) => {
