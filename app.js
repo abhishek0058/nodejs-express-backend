@@ -7,6 +7,8 @@ var logger = require('morgan');
 var cors = require('cors');
 var socket = require( "socket.io" );
 var cookieSession = require('cookie-session')
+var boom = require('express-boom');
+const { errors } = require('celebrate');
 var io = socket();
 var app = express();
 
@@ -24,8 +26,10 @@ var queries=require('./routes/queries');
 var machineReports=require('./routes/machineReports');
 var ccavReqHandler = require('./routes/ccavRequestHandler.js');
 var ccavResHandler = require('./routes/ccavResponseHandler.js');
-var ccavenue = require('./routes/ccavenue');
+// var ccavenue = require('./routes/ccavenue');
 var newMachineSocket = require("./routes/newMachineSockets")(io);
+var userReports = require('./routes/userReports');
+var backup = require('./routes/backup.js');
 
 app.use(cookieSession({
   name: 'laudrybay',
@@ -42,6 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(boom());
 
 app.post('/ccavRequestHandler', function (request, response){
   ccavReqHandler.postReq(request, response);
@@ -77,12 +82,14 @@ app.use('/purchaseHistory', purchaseHistory);
 app.use('/queries', queries);
 app.use('/machineReports',machineReports);
 app.use('/newMachineSocket', newMachineSocket);
-
+app.use('/userReports', userReports);
+app.use('/backup', backup);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
+app.use(errors());
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development

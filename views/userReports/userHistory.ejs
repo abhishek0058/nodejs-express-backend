@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>User history</title>
+    <meta name="description" content="LaundryBay - Laundry Business." />
+    <meta name="keywords" content="" />
+    <meta name="author" content="" />
+    <link rel="shortcut icon" href="/js/images/favicon.ico" />
+    <link
+      href="/./admin_ui/assets/plugins/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/./admin_ui/lite version/css/style.css" rel="stylesheet" />
+    <link
+      href="/./admin_ui/lite version/css/colors/blue.css"
+      id="theme"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Machine cycle use history</h1>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            Hostel:
+            <select id="hostel" class="form-control" style="width: 400px">
+              <option value="">Select a hostel</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="search" class="form-control" placeholder="Search by Name, email, mobile">
+          </div>
+        </div>
+        <div class="row" id="result"></div>
+      </div>
+    </div>
+  </body>
+  <script src="/./javascripts/jquery.js"></script>
+  <script src="/./scripts/user_history.js"></script>
+</html>

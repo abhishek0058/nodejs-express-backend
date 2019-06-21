@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('./pool');
+const utils = require('./utils');
+const { celebrate, Joi } = require('celebrate');
 
 const tableName = 'hostel'
 
@@ -21,12 +23,13 @@ router.post('/new', (req, res) => {
 })
 
 router.get('/all', (req, res) => {
-    pool.query(`select *, (select name from city where id = ${tableName}.cityid) as cityname from ${tableName}`, (err, result) => {
+    const query = `select h.*, c.name as cityname from hostel h inner join city c on c.id = h.cityid`;
+    pool.query(query, (err, result) => {
         if(err) {
             console.log(err)
-            res.json({ result: false })
+            res.json({ result: false });
         } else {
-            res.json({ result })
+            res.json({ result });
         }
     })
 })
@@ -104,6 +107,17 @@ router.get('/change-free-cycle/:id/:status', (req, res) => {
         }
         res.json({ result: true });
     })
+});
+
+router.get('/usersList/:hostelId', celebrate({
+    params: {
+        hostelId: Joi.number().integer().required()
+    }
+}), async (req, res) => { 
+    const { hostelId } = req.params;
+    const query = `select id, name, mobile, email from user where hostelid = ?`;
+    const users = await utils.executeQuery(query, [hostelId]);
+    return res.json({ users }); 
 });
 
 module.exports = router;
