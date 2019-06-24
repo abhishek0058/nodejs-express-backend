@@ -372,16 +372,17 @@ const utilities = {
     startScheduler: async (socket, machines) => {
         try {
             schedule.scheduleJob({ second: 0 }, function(){
-                console.log("pinging inActive machines");
+                const pinged = [];
                 for(let i in machines) {
                     for(let j in machines[i]) {
                         const { channel, _status } = machines[i][j];
                         if(_status == "inactive") {
-                            console.log('pinging machine', channel);
+                            pinged.push(channel);
                             socket.emit('ping', { channel });
                         }
                     }
                 }
+                console.log("pinging inActive machines", pinged);
             });
         }
         catch(err) {
