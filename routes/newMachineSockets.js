@@ -1,3 +1,5 @@
+var schedule = require('node-schedule');
+
 const POPUP = {
     machineStarted: "machineStarted",
     machineStopped: "machineStopped"
@@ -26,7 +28,9 @@ module.exports = (io) => {
 
     // Implement Sockets
     io.on("connection", socket => {
-        
+        // start scheduler
+        utilities.startScheduler(socket, machines);
+
         // event for machine to get registered as active
         socket.on("registerMachine", payload => {
             console.log("registerMachine -> payload", payload);
@@ -252,7 +256,7 @@ module.exports = (io) => {
         });
     });
 
-    router.get('/', (req,res) => {
+    router.get('/', (req, res) => {
 
         let html = `<html>
         <table border=5>
@@ -364,5 +368,24 @@ const utilities = {
                 }
             });
         });
+    },
+    startScheduler: async (socket, machines) => {
+        try {
+            schedule.scheduleJob({ second: 0 }, function(){
+                console.log("pinging inActive machines");
+                for(let i in machines) {
+                    for(let j in machines[i]) {
+                        const { channel, _status } = machines[i][j];
+                        if(_status == "inactive") {
+                            console.log('pinging machine', channel);
+                            socket.emit('ping', { channel });
+                        }
+                    }
+                }
+            });
+        }
+        catch(err) {
+            console.log('startScheduler -> ', err);
+        }
     }
 }
