@@ -25,7 +25,9 @@ module.exports = (io) => {
     let activatorUsers = [];
 
     // set scheduler
-    utilities.startScheduler(io, machines);
+    setTimeout(() => {
+        utilities.startScheduler(io, machines);
+    }, 5000);
     
     // TODO: make a function which takes channel as parameter and sets the state of the machine in the machines array
     
@@ -375,6 +377,7 @@ const utilities = {
         try {
             schedule.scheduleJob({ second: 0 }, function(){
                 const pinged = [];
+                console.log('machines -> ', machines.length);
                 for(let i in machines) {
                     for(let j in machines[i]) {
                         const { channel, _status } = machines[i][j];
