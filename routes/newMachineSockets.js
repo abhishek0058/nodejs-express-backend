@@ -23,13 +23,15 @@ module.exports = (io) => {
     )();
     // activator users
     let activatorUsers = [];
+
+    // set scheduler
+    utilities.startScheduler(io, machines);
     
     // TODO: make a function which takes channel as parameter and sets the state of the machine in the machines array
-
+    
     // Implement Sockets
     io.on("connection", socket => {
         // start scheduler
-        utilities.startScheduler(socket, machines);
 
         // event for machine to get registered as active
         socket.on("registerMachine", payload => {
@@ -369,7 +371,7 @@ const utilities = {
             });
         });
     },
-    startScheduler: async (socket, machines) => {
+    startScheduler: async (io, machines) => {
         try {
             schedule.scheduleJob({ second: 0 }, function(){
                 const pinged = [];
@@ -378,7 +380,7 @@ const utilities = {
                         const { channel, _status } = machines[i][j];
                         if(_status == "inactive") {
                             pinged.push(channel);
-                            socket.emit('ping', { channel });
+                            io.emit('ping', { channel });
                         }
                     }
                 }
