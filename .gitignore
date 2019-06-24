@@ -9,3 +9,5 @@ package-lock.json
 routes/pool.js
 
 public/images
+
+public/db_backup.sql
