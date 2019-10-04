@@ -37,8 +37,8 @@ module.exports = (io) => {
 
         // event for machine to get registered as active
         socket.on("registerMachine", payload => {
-            console.log("registerMachine -> payload", payload);
-            console.log("socket Id", socket.id);
+            // console.log("registerMachine -> payload", payload);
+            // console.log("socket Id", socket.id);
             const channel = payload._channel;
             const { timeObj } = payload;
             // Searching for machine in the machines array
@@ -105,7 +105,7 @@ module.exports = (io) => {
 
          // event the machine to verify that it has stopped by the user
          socket.on("machine_stopped", (payload) => {
-            console.log("payload", payload);
+            // console.log("payload", payload);
             // make it running and register the user for it
             const channel = payload._channel;
             let selectHostelId = null, user = null;
@@ -148,7 +148,7 @@ module.exports = (io) => {
 
         // event for users to turn-on the machine
         socket.on("machine_on", (payload) => {   
-            console.log("payload", payload);
+            // console.log("payload", payload);
             const { user, channel } = payload;
             // check user in activatorUsers
             if(activatorUsers.indexOf(user) != -1) {
