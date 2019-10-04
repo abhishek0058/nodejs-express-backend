@@ -70,7 +70,7 @@ module.exports = (io) => {
 
         // event the machine to verify that it has started by the user
         socket.on("machine_started", (payload) => {
-            console.log("payload", payload);
+            // console.log("payload", payload);
             // make it running and register the user for it
             const { user } = payload;
             const channel = payload._channel;
